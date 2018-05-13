@@ -2,7 +2,7 @@ import {
   BooleanDocumentPropertyService,
   AutoNoteProperty,
   OverwriteNoteProperty
-} from './boolean-document-property';
+} from './boolean-document-property-service';
 
 const menuName = 'SWN Faction Helper';
 

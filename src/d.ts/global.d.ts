@@ -3,6 +3,8 @@ declare namespace globalFunctions {
     onOpen(): void;
     toggleAutoNote(): void;
     toggleOverwriteNote(): void;
+    onEdit(event): void;
+    updateNotes(): void;
   }
 }
 

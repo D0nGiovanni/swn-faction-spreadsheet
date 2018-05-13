@@ -3,7 +3,8 @@ import {
   BooleanDocumentPropertyService,
   AutoNoteProperty,
   OverwriteNoteProperty
-} from './boolean-document-property';
+} from './boolean-document-property-service';
+import { NoteWriter } from './note-writer';
 
 var docPropService = new BooleanDocumentPropertyService();
 var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
@@ -33,4 +34,14 @@ global.toggleOverwriteNote = () => {
       ? 'Existing asset notes will now be overwritten.'
       : 'Existing asset notes will not be overwritten anymore.'
   );
+};
+
+global.onEdit = event => {
+  var noteWriter = new NoteWriter(docPropService);
+  noteWriter.updateNotes(event.range);
+};
+
+global.updateNotes = () => {
+  var noteWriter = new NoteWriter(docPropService);
+  noteWriter.updateNotes(spreadSheet.getActiveSheet().getActiveRange(), true);
 };
