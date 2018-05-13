@@ -1,30 +1,42 @@
+import {
+  BooleanDocumentPropertyService,
+  AutoNoteProperty,
+  OverwriteNoteProperty
+} from './boolean-document-property';
+
+const menuName = 'SWN Faction Helper';
+
 export class SwnFactionHelperMenu {
   private autoEnabled: boolean = true;
   private safeEnabled: boolean = true;
-  private menuItems = [
-    { name: 'Update Notes', functionName: 'updateNotes' },
-    {
-      name: (this.autoEnabled ? 'Disable' : 'Enable') + ' Autonote',
-      functionName: 'toggleAutonote'
-    },
-    {
-      name: this.safeEnabled
-        ? 'Update even if note is not blank'
-        : 'Only update empty notes',
-      functionName: 'toggleSafe'
-    }
-  ];
+  private menuItems = () => {
+    return [
+      { name: 'Update Notes', functionName: 'updateNotes' },
+      {
+        name: this.docPropService.get(AutoNoteProperty)
+          ? "Don't add notes automatically"
+          : 'Add notes automatically',
+        functionName: 'toggleAutoNote'
+      },
+      {
+        name: this.docPropService.get(OverwriteNoteProperty)
+          ? 'Only update empty notes'
+          : 'Update even if note is not blank',
+        functionName: 'toggleOverwriteNote'
+      }
+    ];
+  };
 
-  constructor() {}
+  constructor(
+    private spreadSheet: GoogleAppsScript.Spreadsheet.Spreadsheet,
+    private docPropService: BooleanDocumentPropertyService
+  ) {}
 
   onOpen() {
-    // If safeEnabled is not initialized, set it to true.
-    var docProps = PropertiesService.getDocumentProperties();
-    if (docProps.getProperty('safeEnabled') == null)
-      docProps.setProperty('safeEnabled', 'true');
+    this.spreadSheet.addMenu(menuName, this.menuItems());
+  }
 
-    // Add menu
-    var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-    spreadsheet.addMenu('SWN Faction Helper', this.menuItems);
+  update() {
+    this.spreadSheet.updateMenu(menuName, this.menuItems());
   }
 }
