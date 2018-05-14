@@ -54,7 +54,7 @@ global.addFacCreds = () => {
   fcm.updateFacCreds((l, r) => l + r);
 };
 
-global.detractFacCreds = () => {
+global.subtractFacCreds = () => {
   var fcm = new FactionCredsManager(
     spreadSheet.getSheetByName('FactionTracker')
   );

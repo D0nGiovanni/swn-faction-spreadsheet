@@ -6,7 +6,7 @@ declare namespace globalFunctions {
     onEdit(event): void;
     updateNotes(): void;
     addFacCreds(): void;
-    detractFacCreds(): void;
+    subtractFacCreds(): void;
   }
 }
 
