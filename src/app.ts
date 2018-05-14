@@ -22,8 +22,8 @@ global.toggleAutoNote = () => {
   menu.update();
   spreadSheet.toast(
     value
-      ? 'Asset notes will now automatically be added.'
-      : 'Asset notes will not automatically be added anymore.'
+      ? 'Notes will now automatically be added.'
+      : 'Notes will not automatically be added anymore.'
   );
 };
 
@@ -32,8 +32,8 @@ global.toggleOverwriteNote = () => {
   menu.update();
   spreadSheet.toast(
     value
-      ? 'Existing asset notes will now be overwritten.'
-      : 'Existing asset notes will not be overwritten anymore.'
+      ? 'Existing notes will now be overwritten.'
+      : 'Existing notes will not be overwritten anymore.'
   );
 };
 
