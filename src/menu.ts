@@ -11,6 +11,8 @@ export class SwnFactionHelperMenu {
   private safeEnabled: boolean = true;
   private menuItems = () => {
     return [
+      { name: 'Give FacCreds', functionName: 'addFacCreds' },
+      { name: 'Detract FacCreds', functionName: 'detractFacCreds' },
       { name: 'Update Notes', functionName: 'updateNotes' },
       {
         name: this.docPropService.get(AutoNoteProperty)

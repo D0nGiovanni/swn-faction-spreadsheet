@@ -5,6 +5,7 @@ import {
   OverwriteNoteProperty
 } from './boolean-document-property-service';
 import { NoteWriter } from './note-writer';
+import { FactionCredsManager } from './faction-creds-manager';
 
 var docPropService = new BooleanDocumentPropertyService();
 var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
@@ -44,4 +45,18 @@ global.onEdit = event => {
 global.updateNotes = () => {
   var noteWriter = new NoteWriter(docPropService);
   noteWriter.updateNotes(spreadSheet.getActiveSheet().getActiveRange(), true);
+};
+
+global.addFacCreds = () => {
+  var fcm = new FactionCredsManager(
+    spreadSheet.getSheetByName('FactionTracker')
+  );
+  fcm.updateFacCreds((l, r) => l + r);
+};
+
+global.detractFacCreds = () => {
+  var fcm = new FactionCredsManager(
+    spreadSheet.getSheetByName('FactionTracker')
+  );
+  fcm.updateFacCreds((l, r) => l - r);
 };

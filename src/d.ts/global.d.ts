@@ -5,6 +5,8 @@ declare namespace globalFunctions {
     toggleOverwriteNote(): void;
     onEdit(event): void;
     updateNotes(): void;
+    addFacCreds(): void;
+    detractFacCreds(): void;
   }
 }
 

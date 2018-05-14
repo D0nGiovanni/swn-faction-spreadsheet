@@ -13,8 +13,8 @@ export class NoteWriter {
     var overwriteNote = this.docPropService.get(OverwriteNoteProperty);
     var height = range.getHeight();
     var width = range.getWidth();
-    for (var x = 1; x <= width; ++x) {
-      for (var y = 1; y <= height; ++y) {
+    for (let x = 1; x <= width; ++x) {
+      for (let y = 1; y <= height; ++y) {
         var cell = range.getCell(y, x);
         if (!overwriteNote && cell.getNote() != '') continue;
 
