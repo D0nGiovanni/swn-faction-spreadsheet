@@ -11,6 +11,8 @@ var docPropService = new BooleanDocumentPropertyService();
 var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 var menu = new SwnFactionHelperMenu(spreadSheet, docPropService);
 
+// all the global functions required by the spreadsheet are defined here
+
 global.onOpen = () => {
   docPropService.initIfNotExists(AutoNoteProperty);
   docPropService.initIfNotExists(OverwriteNoteProperty);
@@ -48,15 +50,11 @@ global.updateNotes = () => {
 };
 
 global.addFacCreds = () => {
-  var fcm = new FactionCredsManager(
-    spreadSheet.getSheetByName('FactionTracker')
-  );
+  var fcm = new FactionCredsManager(spreadSheet);
   fcm.updateFacCreds((l, r) => l + r);
 };
 
 global.subtractFacCreds = () => {
-  var fcm = new FactionCredsManager(
-    spreadSheet.getSheetByName('FactionTracker')
-  );
+  var fcm = new FactionCredsManager(spreadSheet);
   fcm.updateFacCreds((l, r) => l - r);
 };
