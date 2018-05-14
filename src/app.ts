@@ -65,27 +65,44 @@ global.detractFacCreds = () => {
 
 global.importSpreadsheet = () => {
   var ui = SpreadsheetApp.getUi();
-  spreadSheet.toast('Start!');
-
   var response = ui.prompt(
     'Spreadsheet Import',
-    'Please enter the sheet id of the other spreadsheet',
+    'Please enter the sheet url or id of the source spreadsheet',
     ui.ButtonSet.OK_CANCEL
   );
-  spreadSheet.toast('Promt end!');
-
+  var sheetId = '';
   if (response.getSelectedButton() == ui.Button.OK) {
-    spreadSheet.toast('OK!');
-    let sheetId = response.getResponseText();
-    if (!isAlphaNumeric(sheetId)) {
-      ui.alert('The id should only constist of alphanumeric signs');
+    let input = response.getResponseText();
+    if (isAlphaNumeric(input)) {
+      sheetId = input;
+    } else {
+      sheetId = getIdFromUrl(input);
+    }
+    if (sheetId == '') {
+      spreadSheet.toast(
+        'Oops, something went wrong. Please make sure you entered the url or id correctly.'
+      );
       return;
     }
-    // importService.import(SpreadsheetApp.openById(sheetId));
+    try {
+      let ss = SpreadsheetApp.openById(sheetId);
+      importService.import(ss);
+      spreadSheet.toast(
+        'Yay! You managed to import all your data! Now go get your Nerps!'
+      );
+    } catch (error) {
+      spreadSheet.toast(
+        'Looks like your spreadsheet is lost to the scream. Bummer.'
+      );
+    }
   }
-  spreadSheet.toast('The End!');
 };
 
+function getIdFromUrl(input: string): string {
+  var rxarr = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(input);
+  return rxarr != null ? rxarr[1] : '';
+}
+
 function isAlphaNumeric(str: string): boolean {
-  return /[A-Za-z0-9]+/.test(str);
+  return /^[A-Za-z0-9-_]+$/.test(str);
 }
