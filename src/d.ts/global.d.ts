@@ -7,6 +7,7 @@ declare namespace globalFunctions {
     updateNotes(): void;
     addFacCreds(): void;
     detractFacCreds(): void;
+    importSpreadsheet(): void;
   }
 }
 
