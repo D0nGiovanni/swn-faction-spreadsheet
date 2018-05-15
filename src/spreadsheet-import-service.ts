@@ -2,14 +2,18 @@ import Spreadsheet = GoogleAppsScript.Spreadsheet;
 // the 'Import' prefix signifies that the ranges are used from importing
 // These ranges must not have any columns that contain critical formulas
 const importRangeNames: string[] = [
-  'ImportFactionNameAndStats',
-  'ImportFactionUpkeepToRelationship',
-  'ImportAssetOwnerAndName',
-  'ImportAssetHidden',
-  'ImportAssetHP',
-  'ImportAssetLocation',
-  'ImportFactionTurns',
-  'ImportSectorMap'
+  'AssetHidden',
+  'AssetHP',
+  'AssetLocation',
+  'AssetOwnerAndName',
+  'FactionFacCredsToNotes',
+  'FactionHP',
+  'FactionNames',
+  'FactionStats',
+  'FactionTurns',
+  'SystemCoords',
+  'SystemEntities',
+  'SystemNames'
 ];
 
 export class SpreadsheetImportService {
