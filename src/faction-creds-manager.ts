@@ -1,5 +1,5 @@
-const incomeRangeName = 'Income';
-const facCredsRangeName = 'FacCreds';
+const incomeRangeName = 'FactionIncome';
+const facCredsRangeName = 'FactionFacCreds';
 
 export class FactionCredsManager {
   constructor(private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet) {}

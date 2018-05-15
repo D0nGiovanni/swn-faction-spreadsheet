@@ -113,7 +113,7 @@ export class SectorMapService {
 
 // sreadsheet ranges
 const systemNameRangeName = 'SystemNames';
-const systemEntityRangeName = 'SystemEntityNames';
+const systemEntityRangeName = 'SystemEntities';
 
 // only the ones used are defined, there technically are more
 interface JsonMap {
