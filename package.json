@@ -4,9 +4,11 @@
   "description": "helper functions for swn faction sheet",
   "private": true,
   "dependencies": {
-    "@types/google-apps-script": "0.0.22"
+    "@types/google-apps-script": "0.0.22",
+    "core-js": "^2.5.6"
   },
   "devDependencies": {
+    "@types/core-js": "^0.9.46",
     "gas-webpack-plugin": "^0.3.0",
     "ts-loader": "^4.3.0",
     "webpack": "^4.8.3",
