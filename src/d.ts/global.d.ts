@@ -7,6 +7,7 @@ declare namespace globalFunctions {
     updateNotes(): void;
     addFacCreds(): void;
     subtractFacCreds(): void;
+    importSectorMap(): void;
   }
 }
 

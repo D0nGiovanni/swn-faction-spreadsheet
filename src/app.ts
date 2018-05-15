@@ -6,9 +6,11 @@ import {
 } from './boolean-document-property-service';
 import { NoteWriter } from './note-writer';
 import { FactionCredsManager } from './faction-creds-manager';
+import { SectorMapService } from './sector-map-service';
 
 var docPropService = new BooleanDocumentPropertyService();
 var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+var sectorMapService = new SectorMapService(spreadSheet);
 var menu = new SwnFactionHelperMenu(spreadSheet, docPropService);
 
 // all the global functions required by the spreadsheet are defined here
@@ -57,4 +59,26 @@ global.addFacCreds = () => {
 global.subtractFacCreds = () => {
   var fcm = new FactionCredsManager(spreadSheet);
   fcm.updateFacCreds((l, r) => l - r);
+};
+
+global.importSectorMap = () => {
+  var ui = SpreadsheetApp.getUi();
+  var response = ui.prompt(
+    'Import SectorsWithoutNumber Map',
+    'Please enter the name of the json-file in your Google Drive',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (response.getSelectedButton() == ui.Button.OK) {
+    let input = response.getResponseText();
+    if (!/.json$/i.test(input)) {
+      spreadSheet.toast('Invalid file-format. The file should end in .json');
+      return;
+    }
+    try {
+      sectorMapService.import(input);
+      spreadSheet.toast("Yay! Here's your map! Now go get your Nerps on!");
+    } catch (error) {
+      spreadSheet.toast('Looks like your file is lost to the scream. Bummer.');
+    }
+  }
 };

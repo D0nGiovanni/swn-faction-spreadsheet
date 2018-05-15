@@ -25,7 +25,8 @@ export class SwnFactionHelperMenu {
           ? 'Only update empty notes'
           : 'Update even if note is not blank',
         functionName: 'toggleOverwriteNote'
-      }
+      },
+      { name: 'Import sector map', functionName: 'importSectorMap' }
     ];
   };
 
