@@ -5,7 +5,7 @@ export class BooleanDocumentPropertyService {
 
   initIfNotExists(name: string) {
     var property = this.documentProperties.getProperty(name);
-    if (property == null) this.set(name, true);
+    if (property == null) this.set(name, false);
   }
 
   get(name: string): boolean {
