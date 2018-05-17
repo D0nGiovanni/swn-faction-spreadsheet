@@ -1,4 +1,4 @@
-# swn-faction-sheet-scripts
+# Stars Without Number Faction Spreadsheet
 
 ## Introduction
 
