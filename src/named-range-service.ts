@@ -2,8 +2,8 @@ import { Map } from 'core-js/library';
 import { RangeService } from './range-service';
 
 export class NamedRangeService {
-  namedRanges = new Map<string, GoogleAppsScript.Spreadsheet.Range>();
-  columns = new Map<string, number>();
+  private namedRanges = new Map<string, GoogleAppsScript.Spreadsheet.Range>();
+  private columns = new Map<string, number>();
 
   constructor(private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet) {}
 
@@ -48,7 +48,7 @@ export class NamedRangeService {
    * @param {string[][]} values values to write to range
    * @memberof NamedRangeService
    */
-  set(name: string, values: string[][]) {
+  setRange(name: string, values: string[][]) {
     this.getRangeIfNotExists(name);
     const range = this.namedRanges.get(name);
     const height = range.getHeight();

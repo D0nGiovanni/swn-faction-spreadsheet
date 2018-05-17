@@ -1,75 +1,49 @@
 import { Map } from 'core-js/library';
+import { RangeService } from './range-service';
+import { NamedRangeService, RangeNames } from './named-range-service';
 // Google Apps Scripts does not support standard Map
 
 export class SectorMapService {
-  constructor(private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet) {}
+  constructor(private namedRangeService: NamedRangeService) {}
 
   import(filename: string): void {
-    var sectormap = this.getSectorMapFromDrive(filename);
-    var ranges = this.spreadsheet.getNamedRanges();
-    var systemNameRange = ranges
-      .filter(el => el.getName() == systemNameRangeName)[0]
-      .getRange();
-    var systemEntityRange = ranges
-      .filter(el => el.getName() == systemEntityRangeName)[0]
-      .getRange();
-
-    var systemNames: string[][] = [];
-    var systemEntities: string[][] = [];
+    const systemNames = [];
+    const systemEntities = [];
+    const systemCoords = [];
+    const sectormap = this.getSectorMapFromDrive(filename);
     sectormap.forEach((val, key) => {
       systemNames.push([key]);
       systemEntities.push(val);
     });
-    // Range.setValues requires the input arrays to have the same dimensions
-    this.fillArrays(
-      systemNames,
-      systemEntities,
-      systemNameRange.getHeight(),
-      systemEntityRange.getWidth()
-    );
-    systemNameRange.setValues(systemNames);
-    systemEntityRange.setValues(systemEntities);
-  }
-
-  private fillArrays(
-    systemNames: string[][],
-    systemEntities: string[][],
-    height: number,
-    width: number
-  ): void {
-    while (systemNames.length < height) {
-      systemNames.push(['']);
-      systemEntities.push(['']);
-    }
-    systemEntities.forEach(row => {
-      while (row.length < width) row.push('');
-    });
+    this.namedRangeService.setRange(RangeNames.SystemNames, systemNames);
+    this.namedRangeService.setRange(RangeNames.SystemEntities, systemEntities);
   }
 
   private getSectorMapFromDrive(filename: string): Map<string, string[]> {
-    var file = this.getFileFromDrive(filename);
-    var json = this.getJsonFromFile(file) as JsonMap;
-    var rawMap = this.getRawMapFromJson(json);
-    var sectorMap = this.getSectorMapFromRawMap(rawMap);
+    const file = this.getFileFromDrive(filename);
+    const json = this.getJsonFromFile(file) as JsonMap;
+    const rawMap = this.getRawMapFromJson(json);
+    const sectorMap = this.getSectorMapFromRawMap(rawMap);
     return sectorMap;
   }
 
   private getRawMapFromJson(json: JsonMap) {
-    var systems = this.getFromJson<System>(json.system);
-    var entities = this.getFromJson<MapEntity>([
+    const systems = this.getFromJson<RawSystem>(json.system);
+    const entities = this.getFromJson<RawMapEntity>([
       json.planet,
       json.deepSpaceStation
     ]);
-    var rawMap = new RawSectorMap(systems, entities);
+    const rawMap = new RawSectorMap(systems, entities);
     return rawMap;
   }
 
   private getSectorMapFromRawMap(rawMap: RawSectorMap): Map<string, string[]> {
-    var hierachialMap = new Map<string, string[]>();
+    const hierachialMap = new Map<string, string[]>();
     rawMap.entities.forEach((item, key) => {
       if (item.parentEntity == 'system') {
-        var sysName = rawMap.systems.get(item.parent).name;
-        // don't overwrite any entries
+        const system = rawMap.systems.get(item.parent);
+        const sysName = system.name;
+        // don't overwrite any existing systems
         if (hierachialMap.has(sysName)) {
           hierachialMap.get(sysName).push(item.name);
         } else {
@@ -81,7 +55,7 @@ export class SectorMapService {
   }
 
   private getFileFromDrive(filename: string): GoogleAppsScript.Drive.File {
-    var iter = DriveApp.getFilesByName(filename);
+    const iter = DriveApp.getFilesByName(filename);
     if (!iter.hasNext()) {
       SpreadsheetApp.getActiveSpreadsheet().toast(
         'Could not find file. Please make sure the file is on your Google Drive.'
@@ -95,7 +69,7 @@ export class SectorMapService {
   }
 
   private getFromJson<T>(obj: object): Map<string, T> {
-    var systems = new Map<string, T>();
+    const systems = new Map<string, T>();
     if (obj instanceof Array) {
       obj.forEach(item => {
         this.addAllOf(systems, item);
@@ -111,10 +85,6 @@ export class SectorMapService {
   }
 }
 
-// sreadsheet ranges
-const systemNameRangeName = 'SystemNames';
-const systemEntityRangeName = 'SystemEntities';
-
 // only the ones used are defined, there technically are more
 interface JsonMap {
   system: any;
@@ -123,21 +93,23 @@ interface JsonMap {
 }
 
 class RawSectorMap {
-  systems: Map<string, System>;
-  entities: Map<string, MapEntity>;
-  constructor(systems: Map<string, System>, entities: Map<string, MapEntity>) {
-    this.systems = systems;
-    this.entities = entities;
-  }
+  constructor(
+    public systems: Map<string, RawSystem>,
+    public entities: Map<string, RawMapEntity>
+  ) {}
 }
 
-interface MapEntity {
+interface RawMapEntity {
   name: string;
   parent: string;
   parentEntity: string;
 }
 
-interface System extends MapEntity {
-  x: number;
-  y: number;
+interface RawSystem extends RawMapEntity {
+  x: any;
+  y: any;
+}
+
+class SystemData {
+  constructor(public coords: number[], public entities: string[]) {}
 }

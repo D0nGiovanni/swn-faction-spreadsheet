@@ -12,9 +12,9 @@ import { NoteLookup } from './note-lookup';
 
 var docPropService = new BooleanDocumentPropertyService();
 var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
-var sectorMapService = new SectorMapService(spreadSheet);
 var menu = new SwnFactionHelperMenu(spreadSheet, docPropService);
 var namedRangeService = new NamedRangeService(spreadSheet);
+var sectorMapService = new SectorMapService(namedRangeService);
 var noteLookup = new NoteLookup(namedRangeService);
 // all the global functions required by the spreadsheet are defined here
 
