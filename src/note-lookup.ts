@@ -9,20 +9,20 @@ export class NoteLookup {
 
   constructor(private namedRangeService: NamedRangeService) {}
 
-  getFactionGoal(goal: string): string {
-    return this.getValue(this.goals, RangeNames.LookupFactionGoals, goal);
+  getFactionGoal(target: string): string {
+    return this.getValue(this.goals, RangeNames.LookupFactionGoals, target);
   }
 
-  getFactionTag(tag: string): string {
-    return this.getValue(this.tags, RangeNames.LookupFactionTags, tag);
+  getFactionTag(target: string): string {
+    return this.getValue(this.tags, RangeNames.LookupFactionTags, target);
   }
 
-  getAssetDescription(asset: string): string {
-    return this.getValue(this.assets, RangeNames.LookupAssetDetails, asset);
+  getAssetDetails(target: string): string {
+    return this.getValue(this.assets, RangeNames.LookupAssetDetails, target);
   }
 
-  getAssetNote(note: string): string {
-    return this.getValue(this.assetNotes, RangeNames.LookupAssetNotes, note);
+  getAssetNote(target: string): string {
+    return this.getValue(this.assetNotes, RangeNames.LookupAssetNotes, target);
   }
 
   private getValue(

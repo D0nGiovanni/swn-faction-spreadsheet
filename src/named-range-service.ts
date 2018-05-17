@@ -1,4 +1,5 @@
 import { Map } from 'core-js/library';
+import { RangeService } from './range-service';
 
 export class NamedRangeService {
   namedRanges = new Map<string, GoogleAppsScript.Spreadsheet.Range>();
@@ -52,17 +53,8 @@ export class NamedRangeService {
     const range = this.namedRanges.get(name);
     const height = range.getHeight();
     const width = range.getWidth();
-    this.fitValuesToSize(values, height, width);
+    RangeService.fitValuesToSize(values, height, width);
     range.setValues(values);
-  }
-
-  private fitValuesToSize(values: string[][], height: number, width: number) {
-    while (values.length < height) values.push(['']);
-    while (values.length > height) values.pop();
-    values.forEach(row => {
-      while (row.length < width) row.push('');
-      while (row.length > width) row.pop();
-    });
   }
 
   private getRangeIfNotExists(name: string) {
@@ -75,15 +67,16 @@ export class NamedRangeService {
 export const enum RangeNames {
   AssetHidden = 'AssetHidden',
   AssetHP = 'AssetHP',
-  AssetLocation = 'AssetLocation',
-  AssetNote = 'AssetNote',
-  AssetOwnerAndName = 'AssetOwnerAndName',
-  FactionBalance = 'FactionBalance',
+  AssetLocations = 'AssetLocations',
+  AssetNames = 'AssetNames',
+  AssetNotes = 'AssetNotes',
+  AssetOwnerAndNames = 'AssetOwnerAndNames',
+  FactionBalances = 'FactionBalances',
   FactionGoals = 'FactionGoals',
   FactionGoalsToRelationship = 'FactionGoalsToRelationship',
   FactionHP = 'FactionHP',
-  FactionIncome = 'FactionIncome',
-  FactionLocation = 'FactionLocation',
+  FactionIncomes = 'FactionIncomes',
+  FactionLocations = 'FactionLocations',
   FactionNames = 'FactionNames',
   FactionNotes = 'FactionNotes',
   FactionStats = 'FactionStats',

@@ -46,13 +46,13 @@ export class NoteWriter {
       case ValidSheets.AssetTracker:
         this.writeNotesInColumn(
           rangeData,
-          this.namedRangeService.getColumn(RangeNames.LookupAssetDetails),
-          val => this.noteLookup.getAssetDescription(val),
+          this.namedRangeService.getColumn(RangeNames.AssetNames),
+          val => this.noteLookup.getAssetDetails(val),
           canOverwriteNote
         );
         this.writeNotesInColumn(
           rangeData,
-          this.namedRangeService.getColumn(RangeNames.AssetNote),
+          this.namedRangeService.getColumn(RangeNames.AssetNotes),
           val => this.noteLookup.getAssetNote(val),
           canOverwriteNote
         );
