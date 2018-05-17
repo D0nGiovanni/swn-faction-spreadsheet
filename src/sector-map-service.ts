@@ -11,15 +11,17 @@ export class SectorMapService {
     const systemEntities = [];
     const systemCoords = [];
     const sectormap = this.getSectorMapFromDrive(filename);
-    sectormap.forEach((val, key) => {
+    sectormap.forEach((system, key) => {
       systemNames.push([key]);
-      systemEntities.push(val);
+      systemCoords.push(system.coords);
+      systemEntities.push(system.entities);
     });
     this.namedRangeService.setRange(RangeNames.SystemNames, systemNames);
+    this.namedRangeService.setRange(RangeNames.SystemCoords, systemCoords);
     this.namedRangeService.setRange(RangeNames.SystemEntities, systemEntities);
   }
 
-  private getSectorMapFromDrive(filename: string): Map<string, string[]> {
+  private getSectorMapFromDrive(filename: string): Map<string, SystemData> {
     const file = this.getFileFromDrive(filename);
     const json = this.getJsonFromFile(file) as JsonMap;
     const rawMap = this.getRawMapFromJson(json);
@@ -37,17 +39,20 @@ export class SectorMapService {
     return rawMap;
   }
 
-  private getSectorMapFromRawMap(rawMap: RawSectorMap): Map<string, string[]> {
-    const hierachialMap = new Map<string, string[]>();
+  private getSectorMapFromRawMap(
+    rawMap: RawSectorMap
+  ): Map<string, SystemData> {
+    const hierachialMap = new Map<string, SystemData>();
     rawMap.entities.forEach((item, key) => {
       if (item.parentEntity == 'system') {
         const system = rawMap.systems.get(item.parent);
         const sysName = system.name;
+        const coords = [system.y, system.x];
         // don't overwrite any existing systems
         if (hierachialMap.has(sysName)) {
-          hierachialMap.get(sysName).push(item.name);
+          hierachialMap.get(sysName).entities.push(item.name);
         } else {
-          hierachialMap.set(sysName, [item.name]);
+          hierachialMap.set(sysName, new SystemData(coords, [item.name]));
         }
       }
     });
