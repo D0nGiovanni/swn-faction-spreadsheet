@@ -14,7 +14,7 @@ Check out all the things!
 
 Hello, fellow space traveler. We are in the world of [Stars Without Number](http://www.drivethrurpg.com/product/226996/Stars-Without-Number-Revised-Edition), a tabletop roleplaying game made by Kevin Crawford.
 
-This project aims to be the best resource for your faction management.
+This project aims to be the best resource for your faction management. It should be functional and easy to use. But it shouldshould also be something to get you hyped! It shouldn't look like a hackjob you did for a school assignment. If you don't feel like the current design does that, please tell me! We can improve it together! I'm not a design person, I'm a code person. :)
 
 ## Getting Started
 
