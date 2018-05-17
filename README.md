@@ -16,6 +16,8 @@ Hello, fellow space traveler. We are in the world of [Stars Without Number](http
 
 This project aims to be the best resource for your faction management. It should be functional and easy to use. But it shouldshould also be something to get you hyped! It shouldn't look like a hackjob you did for a school assignment. If you don't feel like the current design does that, please tell me! We can improve it together! I'm not a design person, I'm a code person. :)
 
+This project is based on [BryLotz' faction spreadsheet](https://docs.google.com/spreadsheets/d/1aRmQOS4WZ0ECFQ8RxXk0LsZ3Lq_gZqI_RODbXo5GvmU/edit#gid=1402214138), which in turn is based on the [original spreadsheet](https://www.reddit.com/r/itmejp/comments/2dbqkh/swan_song_faction_sheets_20/) made by IksPort with the help of several contributors.
+
 ## Getting Started
 
 ### Where Can I Find This Sorcery?
