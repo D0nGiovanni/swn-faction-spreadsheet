@@ -7,12 +7,15 @@ import {
 import { NoteWriter } from './note-writer';
 import { FactionCredsManager } from './faction-creds-manager';
 import { SectorMapService } from './sector-map-service';
+import { NamedRangeService, RangeNames } from './named-range-service';
+import { NoteLookup } from './note-lookup';
 
 var docPropService = new BooleanDocumentPropertyService();
 var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 var sectorMapService = new SectorMapService(spreadSheet);
 var menu = new SwnFactionHelperMenu(spreadSheet, docPropService);
-
+var namedRangeService = new NamedRangeService(spreadSheet);
+var noteLookup = new NoteLookup(namedRangeService);
 // all the global functions required by the spreadsheet are defined here
 
 global.onOpen = () => {
@@ -42,12 +45,20 @@ global.toggleOverwriteNote = () => {
 };
 
 global.onEdit = event => {
-  var noteWriter = new NoteWriter(docPropService);
+  var noteWriter = new NoteWriter(
+    docPropService,
+    namedRangeService,
+    noteLookup
+  );
   noteWriter.updateNotes(event.range);
 };
 
 global.updateNotes = () => {
-  var noteWriter = new NoteWriter(docPropService);
+  var noteWriter = new NoteWriter(
+    docPropService,
+    namedRangeService,
+    noteLookup
+  );
   noteWriter.updateNotes(spreadSheet.getActiveSheet().getActiveRange(), true);
 };
 

@@ -3,55 +3,113 @@ import {
   OverwriteNoteProperty,
   AutoNoteProperty
 } from './boolean-document-property-service';
-
+import { NamedRangeService, RangeNames } from './named-range-service';
+import { NoteLookup } from './note-lookup';
 export class NoteWriter {
-  constructor(private docPropService: BooleanDocumentPropertyService) {}
+  constructor(
+    private docPropService: BooleanDocumentPropertyService,
+    private namedRangeService: NamedRangeService,
+    private noteLookup: NoteLookup
+  ) {}
 
-  updateNotes(range, forceUpdate: boolean = false): void {
+  updateNotes(
+    range: GoogleAppsScript.Spreadsheet.Range,
+    forceUpdate: boolean = false
+  ): void {
+    // We're very lazy. We make absolutely sure, we need to do the work before we start.
     if (range == null) return;
     if (!(forceUpdate || this.docPropService.get(AutoNoteProperty))) return;
-    var overwriteNote = this.docPropService.get(OverwriteNoteProperty);
-    var height = range.getHeight();
-    var width = range.getWidth();
-    for (let x = 1; x <= width; ++x) {
-      for (let y = 1; y <= height; ++y) {
-        var cell = range.getCell(y, x);
-        if (!overwriteNote && cell.getNote() != '') continue;
 
-        /* Please note:
-         * Note acquisation is done via DataValidation - is a hack, but it works.
-         * In the future, if a better solution is found, this should be replaced.
-         * How it works:
-         * The cell content is compared to validation criteria values and the note
-         * is taken from one column to the right of the corresponding criteria cell
-        */
+    const canOverwriteNote = this.docPropService.get(OverwriteNoteProperty);
+    const sheetName = range.getSheet().getName();
+    var rangeData = new RangeData();
+    rangeData.colOffset = range.getColumn();
+    rangeData.contents = range.getDisplayValues();
+    rangeData.notes = range.getNotes();
+    rangeData.width = rangeData.notes[0].length;
 
-        var validation = cell.getDataValidation();
-        if (this.hasRightCriteriaType(validation)) {
-          this.updateNoteFromRange(cell, validation.getCriteriaValues()[0]);
-        }
-      }
-    }
-  }
-
-  private hasRightCriteriaType(valid: any): boolean {
-    return (
-      valid != null &&
-      valid.getCriteriaType() ==
-        SpreadsheetApp.DataValidationCriteria.VALUE_IN_RANGE
-    );
-  }
-
-  private updateNoteFromRange(cell, range): void {
-    const targetValue = cell.getValue();
-    var height = range.getHeight();
-    for (var y = 1; y <= height; ++y) {
-      var currentCell = range.getCell(y, 1);
-      if (currentCell.getValue() == targetValue) {
-        // assumes corresponding note content is one cell to the right of currentCell
-        cell.setNote(currentCell.offset(0, 1).getValue());
+    switch (sheetName) {
+      case ValidSheets.FactionTracker:
+        this.writeNotesInColumn(
+          rangeData,
+          this.namedRangeService.getColumn(RangeNames.FactionTags),
+          val => this.noteLookup.getFactionTag(val),
+          canOverwriteNote
+        );
+        this.writeNotesInColumn(
+          rangeData,
+          this.namedRangeService.getColumn(RangeNames.FactionGoals),
+          val => this.noteLookup.getFactionGoal(val),
+          canOverwriteNote
+        );
+        break;
+      case ValidSheets.AssetTracker:
+        this.writeNotesInColumn(
+          rangeData,
+          this.namedRangeService.getColumn(RangeNames.LookupAssetDetails),
+          val => this.noteLookup.getAssetDescription(val),
+          canOverwriteNote
+        );
+        this.writeNotesInColumn(
+          rangeData,
+          this.namedRangeService.getColumn(RangeNames.AssetNote),
+          val => this.noteLookup.getAssetNote(val),
+          canOverwriteNote
+        );
+        break;
+      default:
         return;
-      }
+    }
+    range.setNotes(rangeData.notes);
+  }
+  /**
+   * Update notes in column at targetOffset if in range
+   *
+   * @private
+   * @param {RangeData} rangeData
+   * @param {number} targetOffset absolute column of target that wants to add notes
+   * @param {(n: string) => string} lookupNote callback takes cell value, returns note for value
+   * @param {boolean} canOverwrite
+   * @memberof NoteWriter
+   */
+  private writeNotesInColumn(
+    rangeData: RangeData,
+    targetOffset: number,
+    lookupNote: (n: string) => string,
+    canOverwrite: boolean
+  ) {
+    if (this.isInRange(targetOffset, rangeData.colOffset, rangeData.width)) {
+      // update notes - lookup note with contents value and write result to notes
+      const relativeColumn = targetOffset - rangeData.colOffset;
+      rangeData.notes.forEach((note, row) => {
+        // canOverwrite needs to be here; based on whether note is present or not
+        if (!canOverwrite && note[relativeColumn] != '') return;
+        note[relativeColumn] = lookupNote(
+          rangeData.contents[row][relativeColumn]
+        );
+      });
     }
   }
+
+  private isInRange(
+    target: number,
+    rangeOffset: number,
+    width: number
+  ): boolean {
+    return target >= rangeOffset && target < rangeOffset + width;
+  }
+}
+
+// Cells that are allowed to have notes attached are only in these sheets
+// Allowed are: tags, goals, assets, and asset notes
+const enum ValidSheets {
+  FactionTracker = 'FactionTracker',
+  AssetTracker = 'AssetTracker'
+}
+
+class RangeData {
+  contents: string[][];
+  notes: string[][];
+  colOffset: number;
+  width: number;
 }
