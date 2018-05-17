@@ -5,7 +5,7 @@ import {
   OverwriteNoteProperty
 } from './boolean-document-property-service';
 import { NoteWriter } from './note-writer';
-import { FactionCredsManager } from './faction-creds-manager';
+import { FactionCredsService } from './faction-creds-service';
 import { SectorMapService } from './sector-map-service';
 import { NamedRangeService, RangeNames } from './named-range-service';
 import { NoteLookup } from './note-lookup';
@@ -63,12 +63,12 @@ global.updateNotes = () => {
 };
 
 global.addFacCreds = () => {
-  var fcm = new FactionCredsManager(spreadSheet);
+  var fcm = new FactionCredsService(namedRangeService);
   fcm.updateFacCreds((l, r) => l + r);
 };
 
 global.subtractFacCreds = () => {
-  var fcm = new FactionCredsManager(spreadSheet);
+  var fcm = new FactionCredsService(namedRangeService);
   fcm.updateFacCreds((l, r) => l - r);
 };
 

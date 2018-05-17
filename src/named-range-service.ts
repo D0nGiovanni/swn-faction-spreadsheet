@@ -12,31 +12,40 @@ export class NamedRangeService {
    * @returns {string[][]} values of range; dimensions are arr[row][column]
    * @memberof NamedRangeService
    */
-  getRange(name: string): string[][] {
+  getRange(name: RangeNames): string[][] {
     return this.getValues(name);
   }
 
-  getRanges(names: string[]): Map<string, string[][]> {
+  getRangeAsAny(name: RangeNames): any[][] {
+    return this.getValuesAsAny(name);
+  }
+
+  getRanges(names: RangeNames[]): Map<string, string[][]> {
     const map = new Map<string, string[][]>();
     names.forEach(val => map.set(val, this.getValues(val)));
     return map;
   }
 
-  getColumn(name: string) {
+  getColumn(name: RangeNames) {
     this.getRangeIfNotExists(name);
     this.getColumnIfNotExists(name);
     return this.columns.get(name);
   }
 
-  private getColumnIfNotExists(name: string) {
+  private getColumnIfNotExists(name: RangeNames) {
     if (!this.columns.has(name)) {
       this.columns.set(name, this.namedRanges.get(name).getColumn());
     }
   }
 
-  private getValues(name: string): string[][] {
+  private getValues(name: RangeNames): string[][] {
     this.getRangeIfNotExists(name);
     return this.namedRanges.get(name).getDisplayValues();
+  }
+
+  private getValuesAsAny(name: RangeNames): any[][] {
+    this.getRangeIfNotExists(name);
+    return this.namedRanges.get(name).getValues();
   }
 
   /**
@@ -45,10 +54,10 @@ export class NamedRangeService {
    * clipping any values beyond those dimensions and padding with '' to fit.
    *
    * @param {string} name name of NamedRange
-   * @param {string[][]} values values to write to range
+   * @param {any[][]} values values to write to range
    * @memberof NamedRangeService
    */
-  setRange(name: string, values: string[][]) {
+  setRange(name: RangeNames, values: any[][]) {
     this.getRangeIfNotExists(name);
     const range = this.namedRanges.get(name);
     const height = range.getHeight();
@@ -57,7 +66,7 @@ export class NamedRangeService {
     range.setValues(values);
   }
 
-  private getRangeIfNotExists(name: string) {
+  private getRangeIfNotExists(name: RangeNames) {
     if (!this.namedRanges.has(name)) {
       this.namedRanges.set(name, this.spreadsheet.getRangeByName(name));
     }
