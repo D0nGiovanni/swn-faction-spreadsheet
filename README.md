@@ -18,6 +18,8 @@ This project aims to be the best resource for your faction management. It should
 
 This project is based on [BryLotz' faction spreadsheet](https://docs.google.com/spreadsheets/d/1aRmQOS4WZ0ECFQ8RxXk0LsZ3Lq_gZqI_RODbXo5GvmU/edit#gid=1402214138), which in turn is based on the [original spreadsheet](https://www.reddit.com/r/itmejp/comments/2dbqkh/swan_song_faction_sheets_20/) made by IksPort with the help of several contributors.
 
+I completely rewrote the original script and added some new features. There is no diff, but you can check out the reddit-post above, if you're interested. I am still a typescript noob, but I am learning.
+
 ## Getting Started
 
 ### Where Can I Find This Sorcery?
@@ -70,3 +72,7 @@ Alternatively, you can click **Add notes automatically**.
 When a base of influence loses hit points, the owning faction should loose that much health as well. This is not implemented currently. It will probably need a sprinkle of script dust, but I'm open to other suggestions.
 
 Most other stuff should be automated. If it isn't, let me now! (Unless I've already mentioned it somewhere here)
+
+## Development
+
+Coming soon(tm)...
