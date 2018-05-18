@@ -47,7 +47,8 @@ export class SectorMapService {
       if (item.parentEntity == 'system') {
         const system = rawMap.systems.get(item.parent);
         const sysName = system.name;
-        const coords = [system.y, system.x];
+        // SectorsWithoutNumber stores system coords as 1 higher than is displayed
+        const coords = [system.x - 1, system.y - 1];
         // don't overwrite any existing systems
         if (hierachialMap.has(sysName)) {
           hierachialMap.get(sysName).entities.push(item.name);
