@@ -24,7 +24,7 @@ I completely rewrote the original script and added some new features. There is n
 
 ### Where Can I Find This Sorcery?
 
-Glad you asked! You can find the [current version here](https://docs.google.com/spreadsheets/d/1fpee1O4d-pSfq5Y9qqfOsVUBichT6hF6AVc3Lx56D0M/edit#gid=1402214138).
+Glad you asked! You can find the [current version here](https://docs.google.com/spreadsheets/d/1fpee1O4d-pSfq5Y9qqfOsVUBichT6hF6AVc3Lx56D0M/edit?usp=sharing).
 
 ### Activating Scripts
 
