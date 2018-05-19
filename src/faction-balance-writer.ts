@@ -6,12 +6,12 @@ export class FactionBalanceWriter {
   public updateFacCreds(
     operation: (balance: number, income: number) => number
   ): void {
-    const incomes = this.namedRangeService.getRangeAsAny(
+    const incomes = this.namedRangeService.getRangeAs<number>(
       RangeNames.FactionIncomes
-    ) as number[][];
-    const balances = this.namedRangeService.getRangeAsAny(
+    );
+    const balances = this.namedRangeService.getRangeAs<number>(
       RangeNames.FactionBalances
-    ) as number[][];
+    );
     balances.forEach((balance, key) => {
       const income = incomes[key][0];
       if (typeof income !== 'number') {

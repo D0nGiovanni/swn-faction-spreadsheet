@@ -12,17 +12,17 @@ export class NamedRangeService {
    * @returns {string[][]} values of range; dimensions are arr[row][column]
    * @memberof NamedRangeService
    */
-  public getRange(name: RangeNames): string[][] {
-    return this.getValues(name);
+  public getRange(name: RangeNames) {
+    return this.getDisplayValues(name);
   }
 
-  public getRangeAsAny(name: RangeNames): any[][] {
-    return this.getValuesAsAny(name);
+  public getRangeAs<T>(name: RangeNames) {
+    return this.getValuesAsAny(name) as T[][];
   }
 
-  public getRanges(names: RangeNames[]): Map<string, string[][]> {
+  public getRanges(names: RangeNames[]) {
     const map = new Map<string, string[][]>();
-    names.forEach(val => map.set(val, this.getValues(val)));
+    names.forEach(val => map.set(val, this.getDisplayValues(val)));
     return map;
   }
 
@@ -38,14 +38,14 @@ export class NamedRangeService {
     }
   }
 
-  private getValues(name: RangeNames): string[][] {
+  private getDisplayValues(name: RangeNames) {
     this.getRangeIfNotExists(name);
     return this.namedRanges.get(name).getDisplayValues();
   }
 
-  private getValuesAsAny(name: RangeNames): any[][] {
+  private getValuesAsAny(name: RangeNames) {
     this.getRangeIfNotExists(name);
-    return this.namedRanges.get(name).getValues();
+    return this.namedRanges.get(name).getValues() as any[][];
   }
 
   /**
