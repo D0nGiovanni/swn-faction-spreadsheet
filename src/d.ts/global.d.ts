@@ -1,5 +1,5 @@
 declare namespace globalFunctions {
-  interface Global {
+  interface IGlobal {
     onOpen(): void;
     toggleAutoNote(): void;
     toggleOverwriteNote(): void;
@@ -11,4 +11,10 @@ declare namespace globalFunctions {
   }
 }
 
-declare var global: globalFunctions.Global;
+declare const global: globalFunctions.IGlobal;
+
+/**
+ * declare is used instead of export so that the transpiler does not
+ * include this file in the transpilation process.
+ * this would be a problem for Google Apps Script.
+ */
