@@ -1,21 +1,22 @@
-import { SwnFactionHelperMenu } from './menu';
-import {
-  BooleanDocumentPropertyService,
-  AutoNoteProperty,
-  OverwriteNoteProperty
-} from './boolean-document-property-service';
+import { FactionBalanceWriter } from './faction-balance-writer';
+import { Menu } from './menu';
 import { NoteWriter } from './note-writer';
-import { FactionCredsService } from './faction-creds-service';
-import { SectorMapService } from './sector-map-service';
-import { NamedRangeService, RangeNames } from './named-range-service';
-import { NoteLookup } from './note-lookup';
+import { SectorMapImporter } from './sector-map-importer';
+import {
+  AutoNoteProperty,
+  BooleanDocumentPropertyService,
+  OverwriteNoteProperty
+} from './services/boolean-document-property-service';
+import { NamedRangeService } from './services/named-range-service';
+import { NoteLookupService } from './services/note-lookup-service';
 
-var docPropService = new BooleanDocumentPropertyService();
-var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
-var menu = new SwnFactionHelperMenu(spreadSheet, docPropService);
-var namedRangeService = new NamedRangeService(spreadSheet);
-var sectorMapService = new SectorMapService(namedRangeService);
-var noteLookup = new NoteLookup(namedRangeService);
+const docPropService = new BooleanDocumentPropertyService();
+const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+const menu = new Menu(spreadSheet, docPropService);
+const namedRangeService = new NamedRangeService(spreadSheet);
+const sectorMapService = new SectorMapImporter(namedRangeService);
+const noteLookup = new NoteLookupService(namedRangeService);
+const fcm = new FactionBalanceWriter(namedRangeService);
 // all the global functions required by the spreadsheet are defined here
 
 global.onOpen = () => {
@@ -25,7 +26,7 @@ global.onOpen = () => {
 };
 
 global.toggleAutoNote = () => {
-  var value = docPropService.toggle(AutoNoteProperty);
+  const value = docPropService.toggle(AutoNoteProperty);
   menu.update();
   spreadSheet.toast(
     value
@@ -35,7 +36,7 @@ global.toggleAutoNote = () => {
 };
 
 global.toggleOverwriteNote = () => {
-  var value = docPropService.toggle(OverwriteNoteProperty);
+  const value = docPropService.toggle(OverwriteNoteProperty);
   menu.update();
   spreadSheet.toast(
     value
@@ -45,7 +46,7 @@ global.toggleOverwriteNote = () => {
 };
 
 global.onEdit = event => {
-  var noteWriter = new NoteWriter(
+  const noteWriter = new NoteWriter(
     docPropService,
     namedRangeService,
     noteLookup
@@ -54,7 +55,7 @@ global.onEdit = event => {
 };
 
 global.updateNotes = () => {
-  var noteWriter = new NoteWriter(
+  const noteWriter = new NoteWriter(
     docPropService,
     namedRangeService,
     noteLookup
@@ -63,24 +64,22 @@ global.updateNotes = () => {
 };
 
 global.addFacCreds = () => {
-  var fcm = new FactionCredsService(namedRangeService);
   fcm.updateFacCreds((l, r) => l + r);
 };
 
 global.subtractFacCreds = () => {
-  var fcm = new FactionCredsService(namedRangeService);
   fcm.updateFacCreds((l, r) => l - r);
 };
 
 global.importSectorMap = () => {
-  var ui = SpreadsheetApp.getUi();
-  var response = ui.prompt(
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.prompt(
     'Import SectorsWithoutNumber Map',
     'Please enter the name of the json-file in your Google Drive',
     ui.ButtonSet.OK_CANCEL
   );
-  if (response.getSelectedButton() == ui.Button.OK) {
-    let input = response.getResponseText();
+  if (response.getSelectedButton() === ui.Button.OK) {
+    const input = response.getResponseText();
     if (!/.json$/i.test(input)) {
       spreadSheet.toast('Invalid file-format. The file should end in .json');
       return;

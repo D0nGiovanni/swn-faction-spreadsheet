@@ -12,21 +12,21 @@ export class NamedRangeService {
    * @returns {string[][]} values of range; dimensions are arr[row][column]
    * @memberof NamedRangeService
    */
-  getRange(name: RangeNames): string[][] {
+  public getRange(name: RangeNames): string[][] {
     return this.getValues(name);
   }
 
-  getRangeAsAny(name: RangeNames): any[][] {
+  public getRangeAsAny(name: RangeNames): any[][] {
     return this.getValuesAsAny(name);
   }
 
-  getRanges(names: RangeNames[]): Map<string, string[][]> {
+  public getRanges(names: RangeNames[]): Map<string, string[][]> {
     const map = new Map<string, string[][]>();
     names.forEach(val => map.set(val, this.getValues(val)));
     return map;
   }
 
-  getColumn(name: RangeNames) {
+  public getColumn(name: RangeNames) {
     this.getRangeIfNotExists(name);
     this.getColumnIfNotExists(name);
     return this.columns.get(name);
@@ -57,7 +57,7 @@ export class NamedRangeService {
    * @param {any[][]} values values to write to range
    * @memberof NamedRangeService
    */
-  setRange(name: RangeNames, values: any[][]) {
+  public setRange(name: RangeNames, values: any[][]) {
     this.getRangeIfNotExists(name);
     const range = this.namedRanges.get(name);
     const height = range.getHeight();

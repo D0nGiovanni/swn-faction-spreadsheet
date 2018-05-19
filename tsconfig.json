@@ -6,8 +6,8 @@
     "sourceMap": false,
     "declaration": false,
     "moduleResolution": "node",
-    "emitDecoratorMetadata": false,
-    "experimentalDecorators": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "target": "es5",
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2017"]

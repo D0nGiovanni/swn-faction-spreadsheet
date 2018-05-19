@@ -1,14 +1,12 @@
 import {
-  BooleanDocumentPropertyService,
   AutoNoteProperty,
+  BooleanDocumentPropertyService,
   OverwriteNoteProperty
-} from './boolean-document-property-service';
+} from './services/boolean-document-property-service';
 
-const menuName = 'SWN Faction Helper';
+const MenuName = 'SWN Faction Helper';
 
-export class SwnFactionHelperMenu {
-  private autoEnabled: boolean = true;
-  private safeEnabled: boolean = true;
+export class Menu {
   private menuItems = () => {
     return [
       { name: 'Pay out faction incomes', functionName: 'addFacCreds' },
@@ -35,11 +33,11 @@ export class SwnFactionHelperMenu {
     private docPropService: BooleanDocumentPropertyService
   ) {}
 
-  onOpen() {
-    this.spreadSheet.addMenu(menuName, this.menuItems());
+  public onOpen() {
+    this.spreadSheet.addMenu(MenuName, this.menuItems());
   }
 
-  update() {
-    this.spreadSheet.updateMenu(menuName, this.menuItems());
+  public update() {
+    this.spreadSheet.updateMenu(MenuName, this.menuItems());
   }
 }

@@ -1,28 +1,32 @@
 import {
+  AutoNoteProperty,
   BooleanDocumentPropertyService,
-  OverwriteNoteProperty,
-  AutoNoteProperty
-} from './boolean-document-property-service';
-import { NamedRangeService, RangeNames } from './named-range-service';
-import { NoteLookup } from './note-lookup';
+  OverwriteNoteProperty
+} from './services/boolean-document-property-service';
+import { NamedRangeService, RangeNames } from './services/named-range-service';
+import { NoteLookupService } from './services/note-lookup-service';
 export class NoteWriter {
   constructor(
     private docPropService: BooleanDocumentPropertyService,
     private namedRangeService: NamedRangeService,
-    private noteLookup: NoteLookup
+    private noteLookup: NoteLookupService
   ) {}
 
-  updateNotes(
+  public updateNotes(
     range: GoogleAppsScript.Spreadsheet.Range,
     forceUpdate: boolean = false
   ): void {
     // We're very lazy. We make absolutely sure, we need to do the work before we start.
-    if (range == null) return;
-    if (!(forceUpdate || this.docPropService.get(AutoNoteProperty))) return;
+    if (range == null) {
+      return;
+    }
+    if (!(forceUpdate || this.docPropService.get(AutoNoteProperty))) {
+      return;
+    }
 
     const canOverwriteNote = this.docPropService.get(OverwriteNoteProperty);
     const sheetName = range.getSheet().getName();
-    var rangeData = new RangeData();
+    const rangeData = new RangeData();
     rangeData.colOffset = range.getColumn();
     rangeData.contents = range.getDisplayValues();
     rangeData.notes = range.getNotes();
@@ -83,7 +87,9 @@ export class NoteWriter {
       const relativeColumn = targetOffset - rangeData.colOffset;
       rangeData.notes.forEach((note, row) => {
         // canOverwrite needs to be here; based on whether note is present or not
-        if (!canOverwrite && note[relativeColumn] != '') return;
+        if (!canOverwrite && note[relativeColumn] !== '') {
+          return;
+        }
         note[relativeColumn] = lookupNote(
           rangeData.contents[row][relativeColumn]
         );
@@ -107,9 +113,10 @@ const enum ValidSheets {
   AssetTracker = 'AssetTracker'
 }
 
+// tslint:disable-next-line:max-classes-per-file
 class RangeData {
-  contents: string[][];
-  notes: string[][];
-  colOffset: number;
-  width: number;
+  public contents: string[][];
+  public notes: string[][];
+  public colOffset: number;
+  public width: number;
 }

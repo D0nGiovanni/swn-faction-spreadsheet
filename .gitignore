@@ -1,3 +1,6 @@
+# clasp config file
+.clasp.json
+
 # Output files
 dist/
 out/

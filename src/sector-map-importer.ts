@@ -1,12 +1,11 @@
 import { Map } from 'core-js/library';
-import { RangeService } from './range-service';
-import { NamedRangeService, RangeNames } from './named-range-service';
+import { NamedRangeService, RangeNames } from './services/named-range-service';
 // Google Apps Scripts does not support standard Map
 
-export class SectorMapService {
+export class SectorMapImporter {
   constructor(private namedRangeService: NamedRangeService) {}
 
-  import(filename: string): void {
+  public import(filename: string): void {
     const systemNames = [];
     const systemEntities = [];
     const systemCoords = [];
@@ -43,8 +42,8 @@ export class SectorMapService {
     rawMap: RawSectorMap
   ): Map<string, SystemData> {
     const hierachialMap = new Map<string, SystemData>();
-    rawMap.entities.forEach((item, key) => {
-      if (item.parentEntity == 'system') {
+    rawMap.entities.forEach(item => {
+      if (item.parentEntity === 'system') {
         const system = rawMap.systems.get(item.parent);
         const sysName = system.name;
         // SectorsWithoutNumber stores system coords as 1 higher than is displayed
@@ -91,11 +90,12 @@ export class SectorMapService {
   }
 }
 
-// only the ones used are defined, there technically are more
-interface JsonMap {
-  system: any;
-  planet: any;
-  deepSpaceStation: any;
+// tslint:disable:max-classes-per-file
+
+class JsonMap {
+  public system: any;
+  public planet: any;
+  public deepSpaceStation: any;
 }
 
 class RawSectorMap {
@@ -105,15 +105,15 @@ class RawSectorMap {
   ) {}
 }
 
-interface RawMapEntity {
-  name: string;
-  parent: string;
-  parentEntity: string;
+class RawMapEntity {
+  public name: string;
+  public parent: string;
+  public parentEntity: string;
 }
 
-interface RawSystem extends RawMapEntity {
-  x: any;
-  y: any;
+class RawSystem extends RawMapEntity {
+  public x: any;
+  public y: any;
 }
 
 class SystemData {
