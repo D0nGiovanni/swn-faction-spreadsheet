@@ -24,6 +24,10 @@ I completely rewrote the original script and added some new features. There is n
 
 ### 1.2
 
+* added: import campaigns
+
+### 1.2
+
 * fixed: missing formula in random cell of asset hp/max hp
 * fixed: upkeep now calculates correctly for all factions
 
@@ -59,9 +63,19 @@ In the future I’m hoping to add a way to import the map in a less roundabout w
 
 ### Import Your Existing Campaign
 
-Unfortunately, there is no automated support just now. If you want to get started right away, you will need to copy everything by hand.
+Import your existing campaign!
 
-I am planning on adding an import feature. But first, I want to take a well-deserved break. :)
+If you are using my sheet from version 1.0 on up, you don't need to do anything special. Just select the option **Import campaign** in **the menu** and do what the pop-up tells you.
+
+You might get a warning that your spreadsheet got an error and that it needs to reload. Don't worry, it just can't handle the Awesomeness of your campaign. Just hit **OK** and let it reload your spreadsheet.
+
+This is useful if you want the newest features, but don't want to copy everything over by hand.
+
+#### Import From Your Own Homebrew Spreadsheet
+
+As much as I hate to say it, this feature is not (yet) supported.
+
+If you're wondering: in the background I'm doing some magic with named ranges, so you would have to add all the relevant named ranges. But at that point just copying everything by hand is just as quick.
 
 ## All the Automation - Almost
 
