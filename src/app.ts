@@ -82,7 +82,8 @@ global.importCampaign = () => {
   const ui = SpreadsheetApp.getUi();
   const response = ui.prompt(
     'Spreadsheet Import',
-    'Please enter the sheet url or id of the source spreadsheet',
+    `Please enter the sheet url or id of the source spreadsheet
+     WARNING: This will overwrite all your data!`,
     ui.ButtonSet.OK_CANCEL
   );
   let sheetId = '';
