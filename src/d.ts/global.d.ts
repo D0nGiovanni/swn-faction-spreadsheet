@@ -1,7 +1,7 @@
 // tslint:disable:no-namespace
 declare namespace globalFunctions {
   interface IGlobal {
-    onOpen(): void;
+    onOpen(event: GoogleSheets.OpenEvent): void;
     toggleAutoNote(): void;
     toggleOverwriteNote(): void;
     onEdit(event: GoogleSheets.EditEvent): void;

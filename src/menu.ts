@@ -7,7 +7,11 @@ import {
 const MenuName = 'SWN Faction Helper';
 
 export class Menu {
-  private menuItems = () => {
+  private menuItems = (noAuth: boolean) => {
+    const about = [{ name: 'About', functionName: '' }];
+    if (noAuth) {
+      return about;
+    }
     return [
       { name: 'Pay out faction incomes', functionName: 'addFacCreds' },
       { name: 'Subtract faction incomes', functionName: 'subtractFacCreds' },
@@ -25,7 +29,7 @@ export class Menu {
         functionName: 'toggleOverwriteNote'
       },
       { name: 'Import sector map', functionName: 'importSectorMap' }
-    ];
+    ].concat(about);
   };
 
   constructor(
@@ -33,11 +37,11 @@ export class Menu {
     private docPropService: BooleanDocumentPropertyService
   ) {}
 
-  public onOpen() {
-    this.spreadSheet.addMenu(MenuName, this.menuItems());
+  public onOpen(noAuth) {
+    this.spreadSheet.addMenu(MenuName, this.menuItems(noAuth));
   }
 
   public update() {
-    this.spreadSheet.updateMenu(MenuName, this.menuItems());
+    this.spreadSheet.updateMenu(MenuName, this.menuItems(false));
   }
 }

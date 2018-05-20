@@ -19,10 +19,13 @@ const noteLookup = new NoteLookupService(namedRangeService);
 const fcm = new FactionBalanceWriter(namedRangeService);
 // all the global functions required by the spreadsheet are defined here
 
-global.onOpen = () => {
-  docPropService.initIfNotExists(AutoNoteProperty);
-  docPropService.initIfNotExists(OverwriteNoteProperty);
-  menu.onOpen();
+global.onOpen = event => {
+  const noAuth = event && event.authMode === ScriptApp.AuthMode.NONE;
+  if (!noAuth) {
+    docPropService.initIfNotExists(AutoNoteProperty);
+    docPropService.initIfNotExists(OverwriteNoteProperty);
+  }
+  menu.onOpen(noAuth);
 };
 
 global.toggleAutoNote = () => {
