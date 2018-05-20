@@ -104,11 +104,11 @@ global.importCampaign = () => {
       const ss = SpreadsheetApp.openById(sheetId);
       importService.import(ss);
       spreadSheet.toast(
-        'Yay! You managed to import all your data! Now go get your Nerps!'
+        'Yay! You managed to import all your data! Now go get your Nerps on!'
       );
     } catch (error) {
       spreadSheet.toast(
-        'Looks like your spreadsheet is lost to the scream. Bummer.'
+        'Looks like your spreadsheet is lost to the Scream. Bummer.'
       );
     }
   }

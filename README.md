@@ -22,7 +22,7 @@ I completely rewrote the original script and added some new features. There is n
 
 ## Changelog
 
-### 1.2
+### 1.3
 
 * added: import campaigns
 
