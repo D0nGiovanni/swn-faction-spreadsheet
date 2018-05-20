@@ -1,3 +1,4 @@
+import { AboutPage } from './about-page';
 import { FactionBalanceWriter } from './faction-balance-writer';
 import { Menu } from './menu';
 import { NoteWriter } from './note-writer';
@@ -94,4 +95,8 @@ global.importSectorMap = () => {
       spreadSheet.toast('Looks like your file is lost to the scream. Bummer.');
     }
   }
+};
+
+global.showAbout = () => {
+  AboutPage.showDialog();
 };

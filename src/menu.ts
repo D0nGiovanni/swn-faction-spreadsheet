@@ -8,7 +8,7 @@ const MenuName = 'SWN Faction Helper';
 
 export class Menu {
   private menuItems = (noAuth: boolean) => {
-    const about = [{ name: 'About', functionName: '' }];
+    const about = [{ name: 'About', functionName: 'showAbout' }];
     if (noAuth) {
       return about;
     }
