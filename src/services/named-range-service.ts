@@ -1,0 +1,103 @@
+import { Map } from 'core-js/library';
+import { RangeService } from './range-service';
+
+export class NamedRangeService {
+  private namedRanges = new Map<string, GoogleAppsScript.Spreadsheet.Range>();
+  private columns = new Map<string, number>();
+
+  constructor(private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet) {}
+
+  /**
+   * @param {string} name only use values defined in the provided RangeNames enum
+   * @returns {string[][]} values of range; dimensions are arr[row][column]
+   * @memberof NamedRangeService
+   */
+  public getRange(name: RangeNames) {
+    return this.getDisplayValues(name);
+  }
+
+  public getRangeAs<T>(name: RangeNames) {
+    return this.getValuesAsAny(name) as T[][];
+  }
+
+  public getRanges(names: RangeNames[]) {
+    const map = new Map<string, string[][]>();
+    names.forEach(val => map.set(val, this.getDisplayValues(val)));
+    return map;
+  }
+
+  public getColumn(name: RangeNames) {
+    this.getRangeIfNotExists(name);
+    this.getColumnIfNotExists(name);
+    return this.columns.get(name);
+  }
+
+  private getColumnIfNotExists(name: RangeNames) {
+    if (!this.columns.has(name)) {
+      this.columns.set(name, this.namedRanges.get(name).getColumn());
+    }
+  }
+
+  private getDisplayValues(name: RangeNames) {
+    this.getRangeIfNotExists(name);
+    return this.namedRanges.get(name).getDisplayValues();
+  }
+
+  private getValuesAsAny(name: RangeNames) {
+    this.getRangeIfNotExists(name);
+    return this.namedRanges.get(name).getValues() as any[][];
+  }
+
+  /**
+   * You are responsible that no previous values are overwritten that shouldn't be.
+   * This function will fit the dimensions of values to size of target range, thus
+   * clipping any values beyond those dimensions and padding with '' to fit.
+   *
+   * @param {string} name name of NamedRange
+   * @param {any[][]} values values to write to range
+   * @memberof NamedRangeService
+   */
+  public setRange(name: RangeNames, values: any[][]) {
+    this.getRangeIfNotExists(name);
+    const range = this.namedRanges.get(name);
+    const height = range.getHeight();
+    const width = range.getWidth();
+    RangeService.fitValuesToSize(values, height, width);
+    range.setValues(values);
+  }
+
+  private getRangeIfNotExists(name: RangeNames) {
+    if (!this.namedRanges.has(name)) {
+      this.namedRanges.set(name, this.spreadsheet.getRangeByName(name));
+    }
+  }
+}
+
+export const enum RangeNames {
+  AssetHidden = 'AssetHidden',
+  AssetHP = 'AssetHP',
+  AssetLocations = 'AssetLocations',
+  AssetNames = 'AssetNames',
+  AssetNotes = 'AssetNotes',
+  AssetOwnerAndNames = 'AssetOwnerAndNames',
+  FactionBalances = 'FactionBalances',
+  FactionGoals = 'FactionGoals',
+  FactionGoalsToRelationship = 'FactionGoalsToRelationship',
+  FactionHP = 'FactionHP',
+  FactionIncomes = 'FactionIncomes',
+  FactionLocations = 'FactionLocations',
+  FactionNames = 'FactionNames',
+  FactionNotes = 'FactionNotes',
+  FactionStats = 'FactionStats',
+  FactionTags = 'FactionTags',
+  FactionTurns = 'FactionTurns',
+  LookupAssetDetails = 'LookupAssetDetails',
+  LookupAssetNotes = 'LookupAssetNotes',
+  LookupAssets = 'LookupAssets',
+  LookupFactionTags = 'LookupFactionTags',
+  LookupFactionXP = 'LookupFactionXP',
+  LookupFactionGoals = 'LookupFactionGoals',
+  SystemCoords = 'SystemCoords',
+  SystemEntities = 'SystemEntities',
+  SystemNames = 'SystemNames'
+}

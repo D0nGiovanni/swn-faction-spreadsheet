@@ -1,26 +1,38 @@
-import { SwnFactionHelperMenu } from './menu';
-import {
-  BooleanDocumentPropertyService,
-  AutoNoteProperty,
-  OverwriteNoteProperty
-} from './boolean-document-property-service';
+import { AboutPage } from './about-page';
+import { FactionBalanceWriter } from './faction-balance-writer';
+import { Menu } from './menu';
 import { NoteWriter } from './note-writer';
-import { FactionCredsManager } from './faction-creds-manager';
+import { SectorMapImporter } from './sector-map-importer';
+import {
+  AutoNoteProperty,
+  BooleanDocumentPropertyService,
+  OverwriteNoteProperty
+} from './services/boolean-document-property-service';
+import { NamedRangeService } from './services/named-range-service';
+import { NoteLookupService } from './services/note-lookup-service';
 import { SpreadsheetImportService } from './spreadsheet-import-service';
 
-var docPropService = new BooleanDocumentPropertyService();
-var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
-var menu = new SwnFactionHelperMenu(spreadSheet, docPropService);
-var importService = new SpreadsheetImportService(spreadSheet);
+const docPropService = new BooleanDocumentPropertyService();
+const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+const menu = new Menu(spreadSheet, docPropService);
+const namedRangeService = new NamedRangeService(spreadSheet);
+const sectorMapService = new SectorMapImporter(namedRangeService);
+const noteLookup = new NoteLookupService(namedRangeService);
+const fcm = new FactionBalanceWriter(namedRangeService);
+// all the global functions required by the spreadsheet are defined here
+const importService = new SpreadsheetImportService(spreadSheet);
 
-global.onOpen = () => {
-  docPropService.initIfNotExists(AutoNoteProperty);
-  docPropService.initIfNotExists(OverwriteNoteProperty);
-  menu.onOpen();
+global.onOpen = event => {
+  const noAuth = event && event.authMode === ScriptApp.AuthMode.NONE;
+  if (!noAuth) {
+    docPropService.initIfNotExists(AutoNoteProperty);
+    docPropService.initIfNotExists(OverwriteNoteProperty);
+  }
+  menu.onOpen(noAuth);
 };
 
 global.toggleAutoNote = () => {
-  var value = docPropService.toggle(AutoNoteProperty);
+  const value = docPropService.toggle(AutoNoteProperty);
   menu.update();
   spreadSheet.toast(
     value
@@ -30,7 +42,7 @@ global.toggleAutoNote = () => {
 };
 
 global.toggleOverwriteNote = () => {
-  var value = docPropService.toggle(OverwriteNoteProperty);
+  const value = docPropService.toggle(OverwriteNoteProperty);
   menu.update();
   spreadSheet.toast(
     value
@@ -40,52 +52,54 @@ global.toggleOverwriteNote = () => {
 };
 
 global.onEdit = event => {
-  var noteWriter = new NoteWriter(docPropService);
+  const noteWriter = new NoteWriter(
+    docPropService,
+    namedRangeService,
+    noteLookup
+  );
   noteWriter.updateNotes(event.range);
 };
 
 global.updateNotes = () => {
-  var noteWriter = new NoteWriter(docPropService);
+  const noteWriter = new NoteWriter(
+    docPropService,
+    namedRangeService,
+    noteLookup
+  );
   noteWriter.updateNotes(spreadSheet.getActiveSheet().getActiveRange(), true);
 };
 
 global.addFacCreds = () => {
-  var fcm = new FactionCredsManager(
-    spreadSheet.getSheetByName('FactionTracker')
-  );
   fcm.updateFacCreds((l, r) => l + r);
 };
 
-global.detractFacCreds = () => {
-  var fcm = new FactionCredsManager(
-    spreadSheet.getSheetByName('FactionTracker')
-  );
+global.subtractFacCreds = () => {
   fcm.updateFacCreds((l, r) => l - r);
 };
 
 global.importSpreadsheet = () => {
-  var ui = SpreadsheetApp.getUi();
-  var response = ui.prompt(
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.prompt(
     'Spreadsheet Import',
     'Please enter the sheet url or id of the source spreadsheet',
     ui.ButtonSet.OK_CANCEL
   );
-  var sheetId = '';
-  if (response.getSelectedButton() == ui.Button.OK) {
-    let input = response.getResponseText();
+  let sheetId = '';
+  if (response.getSelectedButton() === ui.Button.OK) {
+    const input = response.getResponseText();
     if (isAlphaNumeric(input)) {
       sheetId = input;
     } else {
       sheetId = getIdFromUrl(input);
     }
-    if (sheetId == '') {
+    if (sheetId === '') {
       spreadSheet.toast(
         'Oops, something went wrong. Please make sure you entered the url or id correctly.'
       );
       return;
     }
     try {
-      let ss = SpreadsheetApp.openById(sheetId);
+      const ss = SpreadsheetApp.openById(sheetId);
       importService.import(ss);
       spreadSheet.toast(
         'Yay! You managed to import all your data! Now go get your Nerps!'
@@ -99,10 +113,36 @@ global.importSpreadsheet = () => {
 };
 
 function getIdFromUrl(input: string): string {
-  var rxarr = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(input);
+  const rxarr = new RegExp('/spreadsheets/d/([a-zA-Z0-9-_]+)').exec(input);
   return rxarr != null ? rxarr[1] : '';
 }
 
 function isAlphaNumeric(str: string): boolean {
   return /^[A-Za-z0-9-_]+$/.test(str);
 }
+
+global.importSectorMap = () => {
+  const ui = SpreadsheetApp.getUi();
+  const response = ui.prompt(
+    'Import SectorsWithoutNumber Map',
+    'Please enter the name of the json-file in your Google Drive',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (response.getSelectedButton() === ui.Button.OK) {
+    const input = response.getResponseText();
+    if (!/.json$/i.test(input)) {
+      spreadSheet.toast('Invalid file-format. The file should end in .json');
+      return;
+    }
+    try {
+      sectorMapService.import(input);
+      spreadSheet.toast("Yay! Here's your map! Now go get your Nerps on!");
+    } catch (error) {
+      spreadSheet.toast('Looks like your file is lost to the scream. Bummer.');
+    }
+  }
+};
+
+global.showAbout = () => {
+  AboutPage.showDialog();
+};

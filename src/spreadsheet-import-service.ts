@@ -19,11 +19,11 @@ const importRangeNames: string[] = [
 export class SpreadsheetImportService {
   constructor(private spreadsheet: Spreadsheet.Spreadsheet) {}
 
-  import(otherSpreadsheet: Spreadsheet.Spreadsheet): void {
-    var source = this.getImportRangesFromSheet(otherSpreadsheet);
-    var target = this.getImportRangesFromSheet(this.spreadsheet);
+  public import(otherSpreadsheet: Spreadsheet.Spreadsheet): void {
+    const source = this.getImportRangesFromSheet(otherSpreadsheet);
+    const target = this.getImportRangesFromSheet(this.spreadsheet);
     importRangeNames.forEach(rName => {
-      let values = source
+      const values = source
         .get(rName)
         .getRange()
         .getValues();
@@ -37,13 +37,14 @@ export class SpreadsheetImportService {
   private getImportRangesFromSheet(
     spreadsheet: Spreadsheet.Spreadsheet
   ): Map<string, Spreadsheet.NamedRange> {
-    var namedRanges = spreadsheet.getNamedRanges();
-    var ranges = new Map<string, Spreadsheet.NamedRange>();
-    for (let i = 0; i < namedRanges.length; i++) {
-      let range = namedRanges[i];
-      let index = importRangeNames.indexOf(range.getName());
-      if (index >= 0) ranges.set(importRangeNames[index], range);
-    }
+    const namedRanges = spreadsheet.getNamedRanges();
+    const ranges = new Map<string, Spreadsheet.NamedRange>();
+    namedRanges.forEach(range => {
+      const index = importRangeNames.indexOf(range.getName());
+      if (index >= 0) {
+        ranges.set(importRangeNames[index], range);
+      }
+    });
     return ranges;
   }
 }

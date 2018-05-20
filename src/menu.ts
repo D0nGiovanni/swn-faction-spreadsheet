@@ -1,19 +1,21 @@
 import {
-  BooleanDocumentPropertyService,
   AutoNoteProperty,
+  BooleanDocumentPropertyService,
   OverwriteNoteProperty
-} from './boolean-document-property-service';
+} from './services/boolean-document-property-service';
 
-const menuName = 'SWN Faction Helper';
+const MenuName = 'SWN Faction Helper';
 
-export class SwnFactionHelperMenu {
-  private autoEnabled: boolean = true;
-  private safeEnabled: boolean = true;
-  private menuItems = () => {
+export class Menu {
+  private menuItems = (noAuth: boolean) => {
+    const about = [{ name: 'About', functionName: 'showAbout' }];
+    if (noAuth) {
+      return about;
+    }
     return [
-      { name: 'Give FacCreds', functionName: 'addFacCreds' },
-      { name: 'Detract FacCreds', functionName: 'detractFacCreds' },
-      { name: 'Update Notes', functionName: 'updateNotes' },
+      { name: 'Pay out faction incomes', functionName: 'addFacCreds' },
+      { name: 'Subtract faction incomes', functionName: 'subtractFacCreds' },
+      { name: 'Update notes for selection', functionName: 'updateNotes' },
       {
         name: this.docPropService.get(AutoNoteProperty)
           ? "Don't add notes automatically"
@@ -26,8 +28,9 @@ export class SwnFactionHelperMenu {
           : 'Update even if note is not blank',
         functionName: 'toggleOverwriteNote'
       },
+      { name: 'Import sector map', functionName: 'importSectorMap' },
       { name: 'Import spreadsheet', functionName: 'importSpreadsheet' }
-    ];
+    ].concat(about);
   };
 
   constructor(
@@ -35,11 +38,11 @@ export class SwnFactionHelperMenu {
     private docPropService: BooleanDocumentPropertyService
   ) {}
 
-  onOpen() {
-    this.spreadSheet.addMenu(menuName, this.menuItems());
+  public onOpen(noAuth) {
+    this.spreadSheet.addMenu(MenuName, this.menuItems(noAuth));
   }
 
-  update() {
-    this.spreadSheet.updateMenu(menuName, this.menuItems());
+  public update() {
+    this.spreadSheet.updateMenu(MenuName, this.menuItems(false));
   }
 }
