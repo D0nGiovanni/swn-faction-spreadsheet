@@ -8,7 +8,7 @@ export class NamedRangeService {
   constructor(private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet) {}
 
   /**
-   * @param {string} name only use values defined in the provided RangeNames enum
+   * @param {RangeNames} name only use values defined in the provided RangeNames enum
    * @returns {string[][]} values of range; dimensions are arr[row][column]
    * @memberof NamedRangeService
    */
@@ -21,31 +21,47 @@ export class NamedRangeService {
   }
 
   public getRanges(names: RangeNames[]) {
-    const map = new Map<string, string[][]>();
-    names.forEach(val => map.set(val, this.getDisplayValues(val)));
+    const map = new Map<RangeNames, string[][]>();
+    names.forEach(name => {
+      const values = this.getDisplayValues(name);
+      if (values != null) {
+        map.set(name, values);
+      }
+    });
     return map;
   }
 
+  /**
+   * @param {RangeNames} name
+   * @returns the column of NamedRange or -1 if not found
+   * @memberof NamedRangeService
+   */
   public getColumn(name: RangeNames) {
-    this.getRangeIfNotExists(name);
-    this.getColumnIfNotExists(name);
-    return this.columns.get(name);
+    if (this.getRangeIfNotLoaded(name)) {
+      this.getColumnIfNotLoaded(name);
+      return this.columns.get(name);
+    }
+    return -1;
   }
 
-  private getColumnIfNotExists(name: RangeNames) {
+  private getColumnIfNotLoaded(name: RangeNames) {
     if (!this.columns.has(name)) {
       this.columns.set(name, this.namedRanges.get(name).getColumn());
     }
   }
 
   private getDisplayValues(name: RangeNames) {
-    this.getRangeIfNotExists(name);
-    return this.namedRanges.get(name).getDisplayValues();
+    if (this.getRangeIfNotLoaded(name)) {
+      return this.namedRanges.get(name).getDisplayValues();
+    }
+    return null;
   }
 
   private getValuesAsAny(name: RangeNames) {
-    this.getRangeIfNotExists(name);
-    return this.namedRanges.get(name).getValues() as any[][];
+    if (this.getRangeIfNotLoaded(name)) {
+      return this.namedRanges.get(name).getValues() as any[][];
+    }
+    return null;
   }
 
   /**
@@ -58,18 +74,38 @@ export class NamedRangeService {
    * @memberof NamedRangeService
    */
   public setRange(name: RangeNames, values: any[][]) {
-    this.getRangeIfNotExists(name);
-    const range = this.namedRanges.get(name);
-    const height = range.getHeight();
-    const width = range.getWidth();
-    RangeService.fitValuesToSize(values, height, width);
-    range.setValues(values);
+    if (this.getRangeIfNotLoaded(name)) {
+      const range = this.namedRanges.get(name);
+      const height = range.getHeight();
+      const width = range.getWidth();
+      RangeService.fitValuesToSize(values, height, width);
+      range.setValues(values);
+    }
   }
 
-  private getRangeIfNotExists(name: RangeNames) {
+  public setRanges(ranges: Map<RangeNames, string[][]>) {
+    ranges.forEach((values, name) => {
+      this.setRange(name, values);
+    });
+  }
+
+  /**
+   * loads NamedRange into namedRanges if it exists
+   *
+   * @private
+   * @param {RangeNames} name
+   * @returns true if spreadsheet contains NamedRange
+   * @memberof NamedRangeService
+   */
+  private getRangeIfNotLoaded(name: RangeNames) {
     if (!this.namedRanges.has(name)) {
-      this.namedRanges.set(name, this.spreadsheet.getRangeByName(name));
+      const range = this.spreadsheet.getRangeByName(name);
+      if (range == null) {
+        return false;
+      }
+      this.namedRanges.set(name, range);
     }
+    return true;
   }
 }
 
@@ -79,10 +115,10 @@ export const enum RangeNames {
   AssetLocations = 'AssetLocations',
   AssetNames = 'AssetNames',
   AssetNotes = 'AssetNotes',
-  AssetOwnerAndNames = 'AssetOwnerAndNames',
+  AssetOwnersAndNames = 'AssetOwnersAndNames',
   FactionBalances = 'FactionBalances',
   FactionGoals = 'FactionGoals',
-  FactionGoalsToRelationship = 'FactionGoalsToRelationship',
+  FactionGoalsToRelationships = 'FactionGoalsToRelationships',
   FactionHP = 'FactionHP',
   FactionIncomes = 'FactionIncomes',
   FactionLocations = 'FactionLocations',

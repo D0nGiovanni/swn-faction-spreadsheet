@@ -9,7 +9,7 @@ declare namespace globalFunctions {
     addFacCreds(): void;
     subtractFacCreds(): void;
     importSectorMap(): void;
-    importSpreadsheet(): void;
+    importCampaign(): void;
     showAbout(): void;
   }
 }

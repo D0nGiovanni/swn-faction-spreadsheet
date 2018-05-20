@@ -29,7 +29,7 @@ export class Menu {
         functionName: 'toggleOverwriteNote'
       },
       { name: 'Import sector map', functionName: 'importSectorMap' },
-      { name: 'Import spreadsheet', functionName: 'importSpreadsheet' }
+      { name: 'Import campaign', functionName: 'importCampaign' }
     ].concat(about);
   };
 
