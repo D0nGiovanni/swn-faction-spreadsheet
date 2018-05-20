@@ -20,6 +20,21 @@ This project is based on [BryLotz' faction spreadsheet](https://docs.google.com/
 
 I completely rewrote the original script and added some new features. There is no diff, but you can check out the reddit-post above, if you're interested. I am still a typescript noob, but I am learning.
 
+## Changelog
+
+### 1.2
+
+* fixed: missing formula in random cell of asset hp/max hp
+* fixed: upkeep now calculates correctly for all factions
+
+### 1.1
+
+* fixed: system coords are now imported correctly
+
+### 1.0
+
+* release
+
 ## Getting Started
 
 ### Where Can I Find This Sorcery?
