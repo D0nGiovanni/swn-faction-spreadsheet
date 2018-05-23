@@ -8,6 +8,7 @@ declare namespace globalFunctions {
     updateNotes(): void;
     addFacCreds(): void;
     subtractFacCreds(): void;
+    pickTheme(): void;
     importSectorMap(): void;
     importCampaign(): void;
     showAbout(): void;

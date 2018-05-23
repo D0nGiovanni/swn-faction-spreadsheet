@@ -1,10 +1,11 @@
 import { Map } from 'core-js/library';
+import { Dimensions } from '../models/dimensions';
 import { RangeService } from './range-service';
 
 export class NamedRangeService {
   private namedRanges = new Map<string, GoogleAppsScript.Spreadsheet.Range>();
   private columns = new Map<string, number>();
-
+  private dimensions = new Map<string, Dimensions>();
   constructor(private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet) {}
 
   /**
@@ -48,6 +49,36 @@ export class NamedRangeService {
     if (!this.columns.has(name)) {
       this.columns.set(name, this.namedRanges.get(name).getColumn());
     }
+  }
+
+  public getDimensions(name: RangeNames) {
+    if (this.getRangeIfNotLoaded(name)) {
+      this.loadDimensions(name);
+      return this.dimensions.get(name);
+    }
+    return null;
+  }
+
+  private loadDimensions(name: RangeNames) {
+    if (!this.dimensions.has(name)) {
+      const range = this.namedRanges.get(name);
+      this.dimensions.set(
+        name,
+        new Dimensions(
+          range.getRow() - 1,
+          range.getColumn() - 1,
+          range.getHeight(),
+          range.getWidth()
+        )
+      );
+    }
+  }
+
+  public getBgColors(name: RangeNames) {
+    if (this.getRangeIfNotLoaded(name)) {
+      return this.namedRanges.get(name).getBackgrounds();
+    }
+    return null;
   }
 
   private getDisplayValues(name: RangeNames) {
@@ -113,15 +144,19 @@ export const enum RangeNames {
   AssetHidden = 'AssetHidden',
   AssetHP = 'AssetHP',
   AssetLocations = 'AssetLocations',
+  AssetMaxHPToUpkeep = 'AssetMaxHPToUpkeep',
   AssetNames = 'AssetNames',
   AssetNotes = 'AssetNotes',
   AssetOwnersAndNames = 'AssetOwnersAndNames',
+  AssetType = 'AssetType', // W/C/F
+  FactionAssets = 'FactionAssets',
   FactionBalances = 'FactionBalances',
   FactionGoals = 'FactionGoals',
   FactionGoalsToRelationships = 'FactionGoalsToRelationships',
   FactionHP = 'FactionHP',
   FactionIncomes = 'FactionIncomes',
   FactionLocations = 'FactionLocations',
+  FactionMaxHPToUpkeep = 'FactionMaxHPToUpkeep',
   FactionNames = 'FactionNames',
   FactionNotes = 'FactionNotes',
   FactionStats = 'FactionStats',
@@ -133,7 +168,9 @@ export const enum RangeNames {
   LookupFactionTags = 'LookupFactionTags',
   LookupFactionXP = 'LookupFactionXP',
   LookupFactionGoals = 'LookupFactionGoals',
+  LookupThemes = 'LookupThemes',
   SystemCoords = 'SystemCoords',
+  SystemCoordsRepresentation = 'SystemCoordsRepresentation',
   SystemEntities = 'SystemEntities',
   SystemNames = 'SystemNames'
 }

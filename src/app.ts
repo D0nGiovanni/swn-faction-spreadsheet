@@ -11,6 +11,7 @@ import {
 } from './services/boolean-document-property-service';
 import { NamedRangeService } from './services/named-range-service';
 import { NoteLookupService } from './services/note-lookup-service';
+import { ThemePicker } from './theme-picker';
 
 const docPropService = new BooleanDocumentPropertyService();
 const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
@@ -20,10 +21,12 @@ const sectorMapService = new SectorMapImporter(namedRangeService);
 const noteLookup = new NoteLookupService(namedRangeService);
 const fcm = new FactionBalanceWriter(namedRangeService);
 const importService = new CampaignImporter(namedRangeService);
+const picker = new ThemePicker(spreadSheet, namedRangeService);
 
 // all the global functions required by the spreadsheet are defined here
 
 global.onOpen = event => {
+  picker.onOpen();
   const noAuth = event && event.authMode === ScriptApp.AuthMode.NONE;
   if (!noAuth) {
     docPropService.initIfNotExists(AutoNoteProperty);
@@ -76,6 +79,10 @@ global.addFacCreds = () => {
 
 global.subtractFacCreds = () => {
   fcm.updateFacCreds((l, r) => l - r);
+};
+
+global.pickTheme = () => {
+  picker.apply('Ours To Bear');
 };
 
 global.importCampaign = () => {
