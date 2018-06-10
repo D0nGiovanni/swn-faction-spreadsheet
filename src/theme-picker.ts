@@ -32,18 +32,24 @@ export class ThemePicker {
 
   public apply(name: string) {
     const theme = this.getTheme(name);
-    this.themeSheet('FactionTracker', theme, [
+    this.themeSheet(SheetNames.FactionTracker, theme, [
       RangeNames.FactionAssets,
       RangeNames.FactionMaxHPToUpkeep
     ]);
-    this.themeSheet('AssetTracker', theme, [
+    this.themeSheet(SheetNames.AssetTracker, theme, [
       RangeNames.AssetTypes,
       RangeNames.AssetMaxHPToUpkeep
+    ]);
+    this.themeSheet(SheetNames.FactionTurns, theme, [
+      RangeNames.FactionTurnsFactions
+    ]);
+    this.themeSheet(SheetNames.SectorMap, theme, [
+      RangeNames.SystemCoordsRepresentation
     ]);
   }
 
   private themeSheet(
-    sheetName: string,
+    sheetName: SheetNames,
     theme: Theme,
     protRanges: RangeNames[]
   ) {
@@ -92,11 +98,11 @@ export class ThemePicker {
   }
 
   private setBorderColor(
-    sheetName: string,
+    sheetName: SheetNames,
     sheet: GoogleAppsScript.Spreadsheet.Sheet,
     theme: Theme
   ) {
-    if (sheetName === 'FactionTracker') {
+    if (sheetName === SheetNames.FactionTracker) {
       sheet
         .getRange('D2:I')
         .setBorder(null, null, null, null, null, null, theme.borderColor, null);
@@ -104,11 +110,11 @@ export class ThemePicker {
   }
 
   private setConditionalRuleColors(
-    sheetName: string,
+    sheetName: SheetNames,
     sheet: GoogleAppsScript.Spreadsheet.Sheet,
     theme: Theme
   ) {
-    if (sheetName === 'AssetTracker') {
+    if (sheetName === SheetNames.AssetTracker) {
       const rule = SpreadsheetApp.newConditionalFormatRule()
         .withCriteria(SpreadsheetApp.BooleanCriteria.CUSTOM_FORMULA, [
           '= $D2 = TRUE'
@@ -187,4 +193,11 @@ class Theme {
     public highlightBgColor: string,
     public borderColor: string
   ) {}
+}
+
+enum SheetNames {
+  FactionTracker = 'FactionTracker',
+  AssetTracker = 'AssetTracker',
+  FactionTurns = 'FactionTurns',
+  SectorMap = 'SectorMap'
 }
