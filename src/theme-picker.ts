@@ -1,25 +1,19 @@
-import { Map } from 'core-js/library';
+import { Dimensions } from './models/dimensions';
 import { NamedRangeService, RangeNames } from './services/named-range-service';
 
 export class ThemePicker {
-  private themes = new Map<string, Theme>();
-
   constructor(
     private spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet,
     private namedRangeService: NamedRangeService
   ) {}
 
-  public onOpen() {
-    this.getThemes();
-  }
-
-  private getThemes(): Theme {
+  private getTheme(selected: string): Theme {
     const themes = this.namedRangeService.getRange(RangeNames.LookupThemes);
     let theme;
     themes.forEach(data => {
       const name = data.shift();
       SpreadsheetApp.getActiveSpreadsheet().toast(data[5]);
-      if (name) {
+      if (name === selected) {
         theme = new Theme(
           data[0],
           data[1],
@@ -31,72 +25,144 @@ export class ThemePicker {
           data[7],
           data[8]
         );
-        this.themes.set(name, theme);
       }
     });
     return theme;
   }
 
   public apply(name: string) {
-    let bla = this.themes.keys[0];
-    bla = name;
-    bla = bla;
-    const theme = this.getThemes();
-    const sheet = this.spreadsheet.getSheetByName('FactionTracker');
+    const theme = this.getTheme(name);
+    this.themeSheet('FactionTracker', theme, [
+      RangeNames.FactionAssets,
+      RangeNames.FactionMaxHPToUpkeep
+    ]);
+    this.themeSheet('AssetTracker', theme, [
+      RangeNames.AssetTypes,
+      RangeNames.AssetMaxHPToUpkeep
+    ]);
+  }
 
-    const range = sheet.getRange('A:Z');
-    const bgColors = range.getBackgrounds(); // get whole sheet
-    const assets = RangeNames.FactionAssets;
-    const assetDimensions = this.namedRangeService.getDimensions(assets);
-    const hpToUpkeep = RangeNames.FactionMaxHPToUpkeep;
-    const hpDimensions = this.namedRangeService.getDimensions(hpToUpkeep);
+  private themeSheet(
+    sheetName: string,
+    theme: Theme,
+    protRanges: RangeNames[]
+  ) {
+    const sheet = this.spreadsheet.getSheetByName(sheetName);
+    const dims: Dimensions[] = [];
+    protRanges.forEach(r => {
+      dims.push(this.namedRangeService.getDimensions(r));
+    });
+    const range = sheet.getRange('A:Z'); // get whole sheet
+    this.setBgColors(range, dims, theme);
+    this.setFontColors(range, dims, theme);
+    this.setBorderColor(sheetName, sheet, theme);
+    this.setConditionalRuleColors(sheetName, sheet, theme);
+  }
 
-    // apply backgrounds
-    this.applyColorToHead(bgColors, theme);
+  private setBgColors(
+    range: GoogleAppsScript.Spreadsheet.Range,
+    dims: Dimensions[],
+    theme: Theme
+  ) {
+    const bgColors = range.getBackgrounds();
+    this.setColors(
+      bgColors,
+      dims,
+      theme.headBgColor,
+      theme.bodyBgColor,
+      theme.protectedBgColor
+    );
+    range.setBackgrounds(bgColors);
+  }
+
+  private setFontColors(
+    range: GoogleAppsScript.Spreadsheet.Range,
+    dims: Dimensions[],
+    theme: Theme
+  ) {
+    const fontColors = range.getFontColors();
+    this.setColors(
+      fontColors,
+      dims,
+      theme.headFontColor,
+      theme.bodyFontColor,
+      theme.protectedFontColor
+    );
+    range.setFontColors(fontColors);
+  }
+
+  private setBorderColor(
+    sheetName: string,
+    sheet: GoogleAppsScript.Spreadsheet.Sheet,
+    theme: Theme
+  ) {
+    if (sheetName === 'FactionTracker') {
+      sheet
+        .getRange('D2:I')
+        .setBorder(null, null, null, null, null, null, theme.borderColor, null);
+    }
+  }
+
+  private setConditionalRuleColors(
+    sheetName: string,
+    sheet: GoogleAppsScript.Spreadsheet.Sheet,
+    theme: Theme
+  ) {
+    if (sheetName === 'AssetTracker') {
+      const rule = SpreadsheetApp.newConditionalFormatRule()
+        .withCriteria(SpreadsheetApp.BooleanCriteria.CUSTOM_FORMULA, [
+          '= $D2 = TRUE'
+        ])
+        .setRanges([sheet.getRange('A2:Z')])
+        .setBold(true)
+        .setFontColor(theme.highlightFontColor)
+        .setBackground(theme.highlightBgColor)
+        .build();
+      sheet.setConditionalFormatRules([rule]);
+    }
+  }
+
+  private setColors(
+    values: string[][],
+    dims: Dimensions[],
+    headColor: string,
+    bodyColor: string,
+    protColor: string
+  ) {
+    this.setHeadColor(values, headColor);
     let last = 0;
-    const dims = [assetDimensions, hpDimensions];
     dims.forEach(dim => {
-      this.applyColorToBody(bgColors, theme.bodyBgColor, last, dim.column);
-      this.applyColorToBody(
-        bgColors,
-        theme.protectedBgColor,
+      this.setBodyColor(values, bodyColor, last, dim.column);
+      this.setBodyColor(
+        values,
+        protColor,
         dim.column,
         (last = dim.column + dim.width)
       );
     });
-    this.applyColorToBody(
-      bgColors,
-      theme.bodyBgColor,
-      last,
-      bgColors[0].length
-    );
-    range.setBackgrounds(bgColors);
-
-    // apply fonts
-    // apply borders
-    // apply conditionalrules
+    this.setBodyColor(values, bodyColor, last, values[0].length);
   }
 
-  private applyColorToHead(bgColors: string[][], theme: Theme) {
-    for (let i = 0; i < bgColors[0].length; i++) {
-      bgColors[0][i] = theme.headBgColor;
+  private setHeadColor(values: string[][], headColor: string) {
+    for (let i = 0; i < values[0].length; i++) {
+      values[0][i] = headColor;
     }
   }
 
-  private applyColorToBody(
-    bgColors: string[][],
+  private setBodyColor(
+    values: string[][],
     color: string,
     begin: number,
     end: number
   ) {
     const secondRow = 1;
-    for (let rowId = secondRow; rowId < bgColors.length; rowId++) {
-      const row = bgColors[rowId];
-      this.applyColorToRow(row, color, begin, end);
+    for (let rowId = secondRow; rowId < values.length; rowId++) {
+      const row = values[rowId];
+      this.SetRowColor(row, color, begin, end);
     }
   }
 
-  private applyColorToRow(
+  private SetRowColor(
     row: string[],
     color: string,
     begin: number,

@@ -26,7 +26,6 @@ const picker = new ThemePicker(spreadSheet, namedRangeService);
 // all the global functions required by the spreadsheet are defined here
 
 global.onOpen = event => {
-  picker.onOpen();
   const noAuth = event && event.authMode === ScriptApp.AuthMode.NONE;
   if (!noAuth) {
     docPropService.initIfNotExists(AutoNoteProperty);

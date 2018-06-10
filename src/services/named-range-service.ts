@@ -148,7 +148,7 @@ export const enum RangeNames {
   AssetNames = 'AssetNames',
   AssetNotes = 'AssetNotes',
   AssetOwnersAndNames = 'AssetOwnersAndNames',
-  AssetType = 'AssetType', // W/C/F
+  AssetTypes = 'AssetTypes', // W/C/F
   FactionAssets = 'FactionAssets',
   FactionBalances = 'FactionBalances',
   FactionGoals = 'FactionGoals',
@@ -162,6 +162,7 @@ export const enum RangeNames {
   FactionStats = 'FactionStats',
   FactionTags = 'FactionTags',
   FactionTurns = 'FactionTurns',
+  FactionTurnsFactions = 'FactionTurnsFactions',
   LookupAssetDetails = 'LookupAssetDetails',
   LookupAssetNotes = 'LookupAssetNotes',
   LookupAssets = 'LookupAssets',
