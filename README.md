@@ -6,9 +6,6 @@ Hey there! Thanks for checking out this SWN faction sheet! I hope you’ll like 
 
 I want to thank BryLotz and warpig for answering my many pesky questions regarding the old sheet and SectorsWithoutNumber.
 Also, thank you to everyone else who gave me valuable input on how to design the sheet!
-And thank you mom, dad, and… ok I’ll stop now.
-
-Check out all the things!
 
 ## What the heck is this?
 
@@ -21,6 +18,11 @@ This project is based on [BryLotz' faction spreadsheet](https://docs.google.com/
 I completely rewrote the original script and added some new features. There is no diff, but you can check out the reddit-post above, if you're interested. I am still a typescript noob, but I am learning.
 
 ## Changelog
+
+### 1.4
+
+* changed: goodbye boring Arial; hello awesome new fonts!
+* fixed: minor bugs (tag picker now doesn't show "Tag" anymore)
 
 ### 1.3
 
@@ -57,13 +59,11 @@ Congrats! You just unlocked your first achievement: Script Kiddie! Now you can c
 
 You can import your generated sector map from [Sectors Without Number](https://sectorswithoutnumber.com/)! Activate scripts and click **Import sector map** in **the menu**.
 
-Please note: currently, you need to download the map as a JSON file, upload it to your google drive and then enter the name of the file, e.g. **Acheron Rho.json** (spaces allowed). You may delete the file afterwards. Yes, Google Apps Scripts is weird...
+Please note: currently, you need to download the map as a JSON file, upload it to your google drive and then enter the file name, e.g. **Acheron Rho.json** (spaces allowed). You may delete the file afterwards. Yes, Google Apps Scripts is weird...
 
 In the future I’m hoping to add a way to import the map in a less roundabout way.
 
-### Import Your Existing Campaign
-
-Import your existing campaign!
+### Update Your Sheet
 
 If you are using my sheet from version 1.0 on up, you don't need to do anything special. Just select the option **Import campaign** in **the menu** and do what the pop-up tells you.
 
@@ -71,7 +71,7 @@ You might get a warning that your spreadsheet got an error and that it needs to 
 
 This is useful if you want the newest features, but don't want to copy everything over by hand.
 
-#### Import From Your Own Homebrew Spreadsheet
+#### Import From Your Own Spreadsheet
 
 As much as I hate to say it, this feature is not (yet) supported.
 
@@ -98,10 +98,6 @@ Alternatively, you can click **Add notes automatically**.
 
 ## What Is Not Automated - yet?
 
-When a base of influence loses hit points, the owning faction should loose that much health as well. This is not implemented currently. It will probably need a sprinkle of script dust, but I'm open to other suggestions.
+When a base of influence loses hit points, the owning faction should loose that much health as well. Due to the limitations of Google Spreadsheets, it is not possible to automate this - at least not in any way I would know.
 
 Most other stuff should be automated. If it isn't, let me now! (Unless I've already mentioned it somewhere here)
-
-## Development
-
-Coming soon(tm)...
