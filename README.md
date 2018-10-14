@@ -19,27 +19,32 @@ I completely rewrote the original script and added some new features. There is n
 
 ## Changelog
 
+### 1.5
+
+- added: gengineered slaves to asset table (unique to eugenics cult factions)
+- fixed: some asset details were updated to revised version, in accordance with the rulebook
+
 ### 1.4
 
-* changed: goodbye boring Arial; hello awesome new fonts!
-* fixed: minor bugs (tag picker now doesn't show "Tag" anymore)
+- changed: goodbye boring Arial; hello awesome new fonts!
+- fixed: minor bugs (tag picker now doesn't show "Tag" anymore)
 
 ### 1.3
 
-* added: import campaigns
+- added: import campaigns
 
 ### 1.2
 
-* fixed: missing formula in random cell of asset hp/max hp
-* fixed: upkeep now calculates correctly for all factions
+- fixed: missing formula in random cell of asset hp/max hp
+- fixed: upkeep now calculates correctly for all factions
 
 ### 1.1
 
-* fixed: system coords are now imported correctly
+- fixed: system coords are now imported correctly
 
 ### 1.0
 
-* release
+- release
 
 ## Getting Started
 
