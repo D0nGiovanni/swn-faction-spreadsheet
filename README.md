@@ -21,6 +21,10 @@ I completely rewrote the original script and added some new features. There is n
 
 ### 1.5
 
+- fixed: the tag Exchange Consultant is now correctly named Exchange Consulate
+
+### 1.5
+
 - added: gengineered slaves to asset table (unique to eugenics cult factions)
 - fixed: some asset details were updated to revised version, in accordance with the rulebook
 
